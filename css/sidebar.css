@@ -1,0 +1,831 @@
+/* ════════════════════════════════════════════════════════════════════
+ * sidebar.css — PROTOCOLO 01 · Fase 2.1 · Release 3
+ * ────────────────────────────────────────────────────────────────────
+ * Sidebar premium: inspirada na referência visual entregue.
+ * Largura aumentada · Ícones grandes · Labels grandes ·
+ * Active state com presença forte · Azul petróleo profundo.
+ *
+ * GARANTIAS:
+ *   ✅ Zero alteração em JS, IDs, handlers, localStorage
+ *   ✅ Logos posicionadas como no original
+ *   ✅ sbToggle(), goTab(), toggleTheme(), openSearch() intactos
+ *   ✅ Offline / file:/// / GitHub Pages / Vercel
+ *
+ * FASE: 2.1 · Release 3
+ * ════════════════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * DESIGN TOKENS
+ * ══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Dimensões — sidebar larga como na referência */
+  --sb-w:          280px;
+  --sb-w-mini:      64px;
+  --sb-ease:        cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Superfície azul petróleo rico */
+  --sb-bg:          #082032;
+  --sb-bg-deep:     #061829;
+  --sb-bg-item-hover: rgba(255,255,255,.055);
+  --sb-bg-item-active: rgba(198,161,91,.13);
+
+  /* Bordas */
+  --sb-bdr-side:    rgba(198,161,91,.22);
+  --sb-bdr-inner:   rgba(255,255,255,.07);
+
+  /* Dourado queimado — identidade */
+  --sb-gold:        #C6A15B;
+  --sb-gold-dim:    rgba(198,161,91,.65);
+
+  /* Items */
+  --sb-item-fg:         rgba(255,255,255,.52);
+  --sb-item-fg-hover:   rgba(255,255,255,.92);
+  --sb-item-fg-active:  #D4AF37;
+
+  /* Ícone */
+  --sb-icon-size:   26px;
+  --sb-icon-op:     0.55;
+  --sb-icon-op-hover: 0.9;
+
+  /* Accent bar */
+  --sb-accent-w:    4px;
+
+  /* Tooltip */
+  --sb-tip-bg:      rgba(5,18,32,.97);
+  --sb-tip-border:  rgba(198,161,91,.28);
+
+  /* Footer */
+  --sb-btn-fg:      rgba(255,255,255,.38);
+}
+
+/* Light mode — sidebar escura (identidade preservada) */
+body.light {
+  --sb-bg:        #082032;
+  --sb-bg-deep:   #061829;
+  --sb-bdr-side:  rgba(198,161,91,.22);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 1. CONTAINER
+ * ══════════════════════════════════════════════════════════════════════ */
+#sidebar {
+  width:           var(--sb-w) !important;
+  min-height:      100vh;
+  background:      var(--sb-bg) !important;
+  background-image:
+    linear-gradient(
+      175deg,
+      rgba(255,255,255,.03) 0%,
+      rgba(255,255,255,0)   50%,
+      rgba(0,0,0,.08)       100%
+    ) !important;
+  border-right:    1px solid var(--sb-bdr-side) !important;
+  display:         flex;
+  flex-direction:  column;
+  position:        fixed;
+  top:             0;
+  left:            0;
+  bottom:          0;
+  z-index:         300;
+  overflow:        hidden;
+  transition:      width 0.26s var(--sb-ease);
+  box-shadow:
+    1px 0 0 rgba(198,161,91,.12),
+    8px 0 48px rgba(0,0,0,.65),
+    20px 0 80px rgba(0,0,0,.2) !important;
+}
+#sidebar.collapsed { width: var(--sb-w-mini) !important; }
+
+#main-content {
+  margin-left:    var(--sb-w);
+  flex:           1;
+  transition:     margin-left 0.26s var(--sb-ease);
+  min-height:     100vh;
+  padding-bottom: 3rem;
+}
+#sidebar.collapsed ~ #main-content { margin-left: var(--sb-w-mini); }
+
+body.light #sidebar {
+  background: var(--sb-bg) !important;
+  background-image:
+    linear-gradient(175deg, rgba(255,255,255,.03) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,.08) 100%) !important;
+  box-shadow: 1px 0 0 rgba(198,161,91,.14), 8px 0 48px rgba(0,0,0,.7), 20px 0 80px rgba(0,0,0,.25) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 2. BRAND — logo centralizada, grande, com base escura
+ * ══════════════════════════════════════════════════════════════════════ */
+.sb-brand {
+  display:          flex !important;
+  flex-direction:   row !important;
+  align-items:      center !important;
+  justify-content:  center !important;
+  gap:              10px !important;
+  /* Padding generoso como na referência */
+  padding:          .85rem 1rem .8rem !important;
+  border-bottom:    1px solid var(--sb-bdr-side) !important;
+  background:       var(--sb-bg-deep) !important;
+  overflow:         hidden !important;
+  flex-shrink:      0;
+  width:            100%;
+  box-sizing:       border-box !important;
+}
+
+/* Logo expandida — maior, mais presença */
+.sb-logo-texto {
+  height:      53px !important;
+  width:       auto !important;
+  object-fit:  contain !important;
+  flex-shrink: 0 !important;
+  /* max-width proporcional ao aumento de altura (42→57, fator ~1.36x) */
+  max-width:   240px !important;
+  overflow:    hidden !important;
+  transition:  max-width 0.26s var(--sb-ease), opacity 0.18s ease !important;
+}
+
+/* Patch — versão recolhida */
+.sb-patch {
+  width:       40px !important;
+  height:      40px !important;
+  object-fit:  contain !important;
+  flex-shrink: 0 !important;
+  display:     none !important;
+}
+
+/* Recolhido — mesma altura do expandido */
+#sidebar.collapsed .sb-brand {
+  justify-content: center !important;
+  /* Mesmo padding vertical do expandido — altura idêntica */
+  padding:         .85rem 0 .8rem !important;
+  gap:             0 !important;
+}
+#sidebar.collapsed .sb-logo-texto {
+  max-width: 0 !important; opacity: 0 !important;
+  pointer-events: none !important; overflow: hidden !important;
+}
+#sidebar.collapsed .sb-patch {
+  display:    block !important;
+  /* Tamanho aumentado — preenche a sidebar recolhida com presença */
+  width:      50px !important;
+  height:     50px !important;
+  object-fit: contain !important;
+  margin:     0 auto !important;
+}
+
+body.light .sb-brand {
+  background: var(--sb-bg-deep) !important;
+  border-bottom-color: var(--sb-bdr-side) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 3. SELETOR DE CONCURSO
+ * ══════════════════════════════════════════════════════════════════════ */
+.conc-selector-wrap {
+  padding:      .55rem 1rem .5rem;
+  border-bottom:1px solid var(--sb-bdr-inner);
+  flex-shrink:  0;
+  background:   rgba(0,0,0,.1);
+}
+.conc-label {
+  display:        block;
+  font-family:    'Oswald', sans-serif;
+  font-size:      .5rem;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color:          rgba(255,255,255,.28);
+  margin-bottom:  .3rem;
+}
+.conc-select-btn {
+  width:           100%;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             6px;
+  padding:         .34rem .7rem;
+  background:      rgba(198,161,91,.07);
+  border:          1px solid rgba(198,161,91,.2);
+  border-radius:   7px;
+  cursor:          pointer;
+  color:           var(--sb-gold-dim);
+  font-family:     'Oswald', sans-serif;
+  font-size:       .7rem;
+  font-weight:     600;
+  text-transform:  uppercase;
+  letter-spacing:  .05em;
+  transition:      background .18s, border-color .18s, color .18s;
+  white-space:     nowrap;
+  overflow:        hidden;
+  text-overflow:   ellipsis;
+}
+.conc-select-btn:hover {
+  background:   rgba(198,161,91,.13);
+  border-color: rgba(198,161,91,.42);
+  color:        var(--sb-gold);
+}
+.conc-select-btn svg { flex-shrink: 0; opacity: .5; }
+#sidebar.collapsed .conc-selector-wrap { display: none; }
+
+body.light .conc-selector-wrap { background: rgba(0,0,0,.1) !important; }
+body.light .conc-label         { color: rgba(255,255,255,.28) !important; }
+body.light .conc-select-btn    { color: var(--sb-gold-dim) !important;
+                                  background: rgba(198,161,91,.07) !important;
+                                  border-color: rgba(198,161,91,.2) !important; }
+body.light .conc-select-btn:hover { color: var(--sb-gold) !important;
+                                     background: rgba(198,161,91,.13) !important;
+                                     border-color: rgba(198,161,91,.42) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 4. COUNTDOWN
+ * ══════════════════════════════════════════════════════════════════════ */
+.sb-cd {
+  padding:      .5rem 1rem .46rem;
+  border-bottom:1px solid var(--sb-bdr-inner);
+  flex-shrink:  0;
+  overflow:     hidden;
+  background:   rgba(255,255,255,.025);
+}
+.sb-cd-inner  { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.sb-cd-num    { font-family: 'Oswald', sans-serif; font-size: 1.05rem; font-weight: 700;
+                color: var(--sb-gold); line-height: 1; }
+.sb-cd-label  { font-size: .6rem; color: rgba(255,255,255,.32); line-height: 1.35; }
+#sidebar.collapsed .sb-cd-label { display: none; }
+#sidebar.collapsed .sb-cd-inner { justify-content: center; }
+#sidebar.collapsed .sb-cd-num   { font-size: .82rem; }
+body.light .sb-cd      { background: rgba(255,255,255,.025) !important; }
+body.light .sb-cd-num  { color: var(--sb-gold) !important; }
+body.light .sb-cd-label{ color: rgba(255,255,255,.32) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 5. NAV CONTAINER
+ * ══════════════════════════════════════════════════════════════════════ */
+.sb-nav {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: .6rem 0;
+  scrollbar-width: none;
+}
+.sb-nav::-webkit-scrollbar { display: none; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 6. NAV ITEM — coração da transformação
+ *    Inspirado na referência: espaçamento generoso, ícones grandes,
+ *    labels maiores, active state com forte presença
+ * ══════════════════════════════════════════════════════════════════════ */
+.sb-item {
+  display:       flex;
+  align-items:   center;
+  gap:           14px;
+  /* Padding generoso — como na referência */
+  padding:       .72rem 1.2rem;
+  cursor:        pointer;
+  border:        none;
+  background:    transparent;
+  width:         100%;
+  text-align:    left;
+  position:      relative;
+  color:         var(--sb-item-fg);
+  transition:
+    background .16s var(--sb-ease),
+    color      .16s var(--sb-ease);
+  white-space:   nowrap;
+  overflow:      hidden;
+  /* Altura maior — itens mais respirados */
+  min-height:    46px;
+}
+
+/* HOVER */
+.sb-item:hover {
+  background: var(--sb-bg-item-hover) !important;
+  color:      var(--sb-item-fg-hover) !important;
+}
+.sb-item:hover .sb-icon { opacity: var(--sb-icon-op-hover) !important; }
+
+/* ACTIVE — forte presença visual como na referência */
+.sb-item.active {
+  background: var(--sb-bg-item-active) !important;
+  color:      var(--sb-item-fg-active) !important;
+}
+.sb-item.active .sb-icon  {
+  opacity: 1 !important;
+  color:   var(--sb-gold) !important;
+}
+.sb-item.active .sb-label {
+  color:       var(--sb-gold) !important;
+  font-weight: 700 !important;
+}
+
+/* Accent bar grossa — exatamente como na referência */
+.sb-item.active::before {
+  content:       '';
+  position:      absolute;
+  left:          0;
+  top:           0;
+  bottom:        0;
+  width:         var(--sb-accent-w);
+  background:    linear-gradient(180deg, #D4AF37 0%, #C6A15B 100%);
+  border-radius: 0 3px 3px 0;
+  box-shadow:    0 0 14px rgba(198,161,91,.5);
+}
+
+/* Linha separadora discreta entre active e vizinhos */
+.sb-item.active::after {
+  content:   '';
+  position:  absolute;
+  inset:     0;
+  border-top:    1px solid rgba(198,161,91,.1);
+  border-bottom: 1px solid rgba(198,161,91,.08);
+  pointer-events: none;
+}
+
+body.light .sb-item              { color: var(--sb-item-fg) !important; }
+body.light .sb-item:hover        { background: var(--sb-bg-item-hover) !important;
+                                    color: var(--sb-item-fg-hover) !important; }
+body.light .sb-item.active       { background: var(--sb-bg-item-active) !important;
+                                    color: var(--sb-item-fg-active) !important; }
+body.light .sb-item.active .sb-label { color: var(--sb-gold) !important; font-weight: 700 !important; }
+body.light .sb-item.active .sb-icon  { color: var(--sb-gold) !important; opacity: 1 !important; }
+
+
+/* ── Ícone — maior, mais presença ─────────────────────────────────── */
+.sb-icon {
+  width:           var(--sb-icon-size);
+  height:          var(--sb-icon-size);
+  flex-shrink:     0;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       1.15rem;
+  opacity:         var(--sb-icon-op);
+  color:           inherit;
+  transition:      opacity .16s ease, color .16s ease;
+}
+/* SVGs dentro do ícone — escalar para preencher o container */
+.sb-icon svg {
+  width:  20px !important;
+  height: 20px !important;
+}
+
+/* ── Label — fonte maior como na referência ────────────────────────── */
+.sb-label {
+  font-family:    'Oswald', sans-serif;
+  /* Maior — referência usa ~1rem */
+  font-size:      .88rem;
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  overflow:       hidden;
+  white-space:    nowrap;
+  line-height:    1;
+  transition:     opacity .18s ease, width .26s var(--sb-ease),
+                  color .16s ease, font-weight .16s ease;
+}
+
+/* ── Recolhido ─────────────────────────────────────────────────────── */
+#sidebar.collapsed .sb-item {
+  justify-content: center !important;
+  padding: .72rem 0 !important;
+  gap: 0 !important;
+}
+#sidebar.collapsed .sb-icon  { margin: 0 auto !important; }
+#sidebar.collapsed .sb-label {
+  opacity: 0 !important; width: 0 !important;
+  pointer-events: none !important; overflow: hidden !important;
+}
+
+
+/* ── Tooltip — glassmorphism premium ──────────────────────────────── */
+.sb-tooltip {
+  display:              none;
+  position:             absolute;
+  left:                 calc(var(--sb-w-mini) + 10px);
+  top:                  50%;
+  transform:            translateY(-50%);
+  background:           var(--sb-tip-bg);
+  border:               1px solid var(--sb-tip-border);
+  color:                rgba(255,255,255,.92);
+  font-family:          'Oswald', sans-serif;
+  font-size:            .72rem;
+  font-weight:          600;
+  text-transform:       uppercase;
+  letter-spacing:       .06em;
+  padding:              .34rem .8rem;
+  border-radius:        8px;
+  white-space:          nowrap;
+  z-index:              9999;
+  pointer-events:       none;
+  box-shadow:           0 4px 28px rgba(0,0,0,.7),
+                        inset 0 1px 0 rgba(255,255,255,.04);
+  backdrop-filter:      blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation:            p01-fade-in .1s ease both;
+}
+#sidebar.collapsed .sb-item:hover .sb-tooltip { display: block; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 7. FOOTER — toggle, busca, tema, crédito
+ * ══════════════════════════════════════════════════════════════════════ */
+.sb-toggle-wrap {
+  padding:         .45rem .8rem;
+  border-top:      1px solid var(--sb-bdr-inner);
+  flex-shrink:     0;
+  display:         flex;
+  justify-content: center;
+  align-items:     center;
+  background:      rgba(0,0,0,.1);
+}
+.sb-search,
+.sb-theme {
+  padding:     .32rem .8rem;
+  border-top:  1px solid rgba(255,255,255,.05);
+  flex-shrink: 0;
+  background:  rgba(0,0,0,.08);
+}
+
+/* Botão de footer — busca */
+.sb-search-btn {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             8px;
+  width:           100%;
+  padding:         .38rem .6rem;
+  border-radius:   8px;
+  background:      rgba(255,255,255,.035);
+  border:          1px solid rgba(255,255,255,.07);
+  color:           var(--sb-btn-fg);
+  cursor:          pointer;
+  font-family:     'Oswald', sans-serif;
+  font-size:       .65rem;
+  font-weight:     600;
+  text-transform:  uppercase;
+  letter-spacing:  .08em;
+  transition:      border-color .18s, color .18s, background .18s;
+  white-space:     nowrap;
+  overflow:        hidden;
+}
+.sb-search-btn:hover {
+  border-color: rgba(198,161,91,.4);
+  color:        var(--sb-gold);
+  background:   rgba(198,161,91,.07);
+}
+
+/* ── Theme switch — interruptor horizontal premium ─────────────────── */
+.sb-theme-btn {
+  position:       relative;
+  display:        grid;
+  grid-template-columns: 1fr 1fr;
+  align-items:    stretch;
+  width:          100%;
+  padding:        3px;
+  border-radius:  99px;
+  background:     #082032;
+  border:         1px solid rgba(198,161,91,.22);
+  cursor:         pointer;
+  overflow:       hidden;
+  font-family:    'Oswald', sans-serif;
+  transition:     border-color .2s ease, background .2s ease;
+}
+.sb-theme-btn:hover {
+  border-color: rgba(198,161,91,.42);
+}
+
+/* Slider deslizante — pill dourada */
+.sb-theme-slider {
+  position:      absolute;
+  top:           3px;
+  bottom:        3px;
+  left:          3px;
+  width:         calc(50% - 3px);
+  background:    linear-gradient(135deg, #D4AF37 0%, #C6A15B 100%);
+  border-radius: 99px;
+  transition:    transform 0.28s cubic-bezier(.4,0,.2,1);
+  box-shadow:    0 2px 10px rgba(198,161,91,.32),
+                 inset 0 1px 0 rgba(255,255,255,.18);
+  z-index:       0;
+}
+/* Dark = slider à esquerda (Escuro ativo); Light = slider à direita */
+body.light .sb-theme-slider {
+  transform: translateX(100%);
+}
+
+/* Cada segmento (label + ícone) */
+.sb-theme-seg {
+  position:       relative;
+  z-index:        1;
+  display:        flex;
+  align-items:    center;
+  justify-content:center;
+  gap:            6px;
+  padding:        .38rem .35rem;
+  font-size:      .62rem;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  transition:     color .22s ease;
+  user-select:    none;
+}
+.sb-theme-seg svg {
+  flex-shrink: 0;
+  transition:  color .22s ease, transform .22s ease;
+}
+
+/* Estado padrão (dark mode):
+   ESCURO está ativo (sobre o slider dourado) → texto escuro
+   CLARO está inativo → texto cinza */
+.sb-theme-seg-dark  { color: #082032; }
+.sb-theme-seg-light { color: rgba(255,255,255,.38); }
+.sb-theme-btn:hover .sb-theme-seg-light { color: rgba(255,255,255,.6); }
+
+/* Light mode: CLARO está sobre o slider dourado → texto escuro */
+body.light .sb-theme-seg-dark  { color: rgba(255,255,255,.38); }
+body.light .sb-theme-seg-light { color: #082032; }
+body.light .sb-theme-btn:hover .sb-theme-seg-dark { color: rgba(255,255,255,.6); }
+
+/* Recolhido: mostra apenas o ícone do modo ATIVO, centralizado.
+   Mantemos a estrutura mas reduzimos ao essencial. */
+#sidebar.collapsed .sb-theme-btn {
+  grid-template-columns: 1fr;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+}
+#sidebar.collapsed .sb-theme-slider { display: none; }
+#sidebar.collapsed .sb-theme-seg span { display: none; }
+#sidebar.collapsed .sb-theme-seg {
+  padding: .45rem 0;
+  color: var(--sb-gold) !important;
+}
+/* No estado dark, mostra a lua (Escuro ativo) — oculta o sol */
+#sidebar.collapsed .sb-theme-seg-light { display: none; }
+/* No light mode, inverte: mostra o sol — oculta a lua */
+body.light #sidebar.collapsed .sb-theme-seg-dark  { display: none; }
+body.light #sidebar.collapsed .sb-theme-seg-light { display: flex; }
+
+/* Toggle pill */
+.sb-toggle-btn {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             6px;
+  padding:         .3rem .9rem;
+  border-radius:   99px;
+  background:      transparent;
+  border:          1px solid rgba(198,161,91,.2);
+  color:           rgba(198,161,91,.52);
+  cursor:          pointer;
+  font-family:     'Oswald', sans-serif;
+  font-size:       .58rem;
+  font-weight:     600;
+  text-transform:  uppercase;
+  letter-spacing:  .1em;
+  transition:      border-color .18s, color .18s, background .18s;
+  white-space:     nowrap;
+  overflow:        hidden;
+}
+.sb-toggle-btn:hover {
+  border-color: rgba(198,161,91,.5);
+  color:        var(--sb-gold);
+  background:   rgba(198,161,91,.07);
+}
+.sb-toggle-label {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .56rem;
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  transition:     opacity .16s ease, max-width .26s var(--sb-ease);
+  max-width:      80px;
+  overflow:       hidden;
+}
+.sb-toggle-arrow {
+  transition:  transform .28s cubic-bezier(.4,0,.2,1);
+  flex-shrink: 0;
+  display:     block;
+}
+#sidebar.collapsed .sb-toggle-arrow { transform: rotate(180deg); }
+#sidebar.collapsed .sb-toggle-btn {
+  padding: 0; border: none; background: transparent; border-radius: 0;
+}
+#sidebar.collapsed .sb-toggle-label {
+  opacity: 0; max-width: 0; pointer-events: none; margin: 0; padding: 0;
+}
+#sidebar.collapsed .sb-search-btn span { display: none; }
+#sidebar.collapsed .sb-search-btn { justify-content: center; }
+
+/* Light mode footer */
+body.light .sb-toggle-wrap { background: rgba(0,0,0,.1) !important; }
+body.light .sb-search,
+body.light .sb-theme       { background: rgba(0,0,0,.08) !important; }
+body.light .sb-toggle-btn  { border-color: rgba(198,161,91,.2) !important;
+                               color: rgba(198,161,91,.52) !important; }
+body.light .sb-toggle-btn:hover { border-color: rgba(198,161,91,.5) !important;
+                                   color: var(--sb-gold) !important; }
+body.light .sb-search-btn  { background: rgba(255,255,255,.035) !important;
+                              border-color: rgba(255,255,255,.07) !important;
+                              color: var(--sb-btn-fg) !important; }
+body.light .sb-search-btn:hover { border-color: rgba(198,161,91,.4) !important;
+                                   color: var(--sb-gold) !important;
+                                   background: rgba(198,161,91,.07) !important; }
+/* Theme switch — no light mode mantém o estilo próprio do switch (definido acima) */
+body.light .sb-theme-btn { background: #082032 !important;
+                            border: 1px solid rgba(198,161,91,.22) !important;
+                            color: inherit !important; }
+body.light .sb-theme-btn:hover { border-color: rgba(198,161,91,.42) !important;
+                                  background: #082032 !important; }
+body.light #icon-moon path   { fill: #C6A15B; stroke: #C6A15B; }
+body.light #icon-moon circle { fill: #C6A15B; }
+
+/* Crédito */
+/* ── User Profile — estilo Discord ──────────────────────────────── */
+.sb-user-profile {
+  display:      flex;
+  align-items:  center;
+  gap:          10px;
+  padding:      .65rem .9rem;
+  border-top:   1px solid var(--sb-bdr-inner);
+  flex-shrink:  0;
+  background:   rgba(0,0,0,.18);
+  cursor:       pointer;
+  overflow:     hidden;
+  transition:   background .18s ease;
+  position:     relative;
+}
+.sb-user-profile:hover {
+  background: rgba(255,255,255,.04);
+}
+
+/* Avatar circular com inicial */
+.sb-user-avatar {
+  width:           36px;
+  height:          36px;
+  border-radius:   50%;
+  background:      linear-gradient(135deg, #1a3a5c 0%, #0d2238 100%);
+  border:          1.5px solid rgba(198,161,91,.4);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-family:     'Oswald', sans-serif;
+  font-size:       .95rem;
+  font-weight:     700;
+  color:           #C6A15B;
+  flex-shrink:     0;
+  text-transform:  uppercase;
+  letter-spacing:  0;
+  /* Sombra sutil no avatar */
+  box-shadow:      0 2px 8px rgba(0,0,0,.4),
+                   0 0 0 1px rgba(198,161,91,.1);
+}
+
+/* Info: nome + email */
+.sb-user-info {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+  overflow:       hidden;
+  flex:           1;
+  min-width:      0;
+}
+.sb-user-name {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .75rem;
+  font-weight:    600;
+  color:          rgba(255,255,255,.88);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+  line-height:    1.2;
+}
+.sb-user-email {
+  font-family:    'Barlow', sans-serif;
+  font-size:      .6rem;
+  font-weight:    400;
+  color:          rgba(255,255,255,.35);
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+  line-height:    1.2;
+  letter-spacing: .01em;
+}
+
+
+/* ── Recolhido: mostra só o avatar centralizado ─────────────────── */
+#sidebar.collapsed .sb-user-profile {
+  justify-content: center;
+  padding:         .65rem 0;
+  gap:             0;
+}
+#sidebar.collapsed .sb-user-info {
+  display: none;
+}
+#sidebar.collapsed .sb-user-avatar {
+  width:     40px;
+  height:    40px;
+  font-size: 1rem;
+}
+
+/* ── Light mode ─────────────────────────────────────────────────── */
+body.light .sb-user-profile {
+  background: rgba(0,0,0,.18) !important;
+  border-top-color: var(--sb-bdr-inner) !important;
+}
+body.light .sb-user-profile:hover {
+  background: rgba(255,255,255,.05) !important;
+}
+body.light .sb-user-avatar {
+  background: linear-gradient(135deg, #1a3a5c 0%, #0d2238 100%) !important;
+  border-color: rgba(198,161,91,.4) !important;
+  color: #C6A15B !important;
+}
+body.light .sb-user-name  { color: rgba(255,255,255,.88) !important; }
+body.light .sb-user-email { color: rgba(255,255,255,.35) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 8. MODAL DE CONCURSO
+ * ══════════════════════════════════════════════════════════════════════ */
+.conc-modal-overlay { background: rgba(0,0,0,.78); }
+.conc-modal {
+  background:    #0d1c2e;
+  border:        1px solid rgba(198,161,91,.2);
+  border-radius: 14px;
+  box-shadow:    0 28px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(198,161,91,.05);
+}
+.conc-modal-header { background: rgba(198,161,91,.04); border-bottom: 1px solid rgba(255,255,255,.07); }
+.conc-modal-title  { color: var(--sb-gold); }
+.conc-modal-footer { border-top: 1px solid rgba(255,255,255,.07); }
+.conc-card {
+  border: 1px solid rgba(255,255,255,.08); border-radius: 10px;
+  background: rgba(255,255,255,.025); transition: border-color .16s, background .16s;
+}
+.conc-card:hover       { border-color: rgba(198,161,91,.35); background: rgba(198,161,91,.06); }
+.conc-card.active-conc { border-color: rgba(198,161,91,.55); background: rgba(198,161,91,.1);
+                          box-shadow: 0 0 0 1px rgba(198,161,91,.18); }
+.conc-card-name  { color: rgba(255,255,255,.85); }
+.conc-card-cargo { color: rgba(255,255,255,.35); }
+.conc-add-btn    { border: 1px dashed rgba(255,255,255,.14); color: rgba(255,255,255,.32); }
+.conc-add-btn:hover { border-color: rgba(198,161,91,.35); color: var(--sb-gold); }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 9. NEUTRALIZAÇÃO DE RESIDUAIS DO core.css
+ * ══════════════════════════════════════════════════════════════════════ */
+#sidebar                          { background:   var(--sb-bg) !important; }
+#sidebar                          { border-right: 1px solid var(--sb-bdr-side) !important; }
+.sb-brand                         { background: var(--sb-bg-deep) !important;
+                                    border-bottom: 1px solid var(--sb-bdr-side) !important;
+                                    padding: .85rem 1rem .8rem !important;
+                                    justify-content: center !important; }
+#sidebar.collapsed .sb-brand      { justify-content: center !important;
+                                    padding: .85rem 0 .8rem !important; gap: 0 !important; }
+#sidebar.collapsed .sb-logo-texto { max-width: 0 !important; opacity: 0 !important;
+                                    pointer-events: none !important; }
+#sidebar.collapsed .sb-patch      { display: block !important;
+                                    width: 50px !important; height: 50px !important;
+                                    margin: 0 auto !important; }
+.sb-item.active                   { background: var(--sb-bg-item-active) !important;
+                                    color: var(--sb-item-fg-active) !important; }
+.sb-item.active::before           { background: linear-gradient(180deg, #D4AF37 0%, #C6A15B 100%) !important; }
+.sb-item.active .sb-label         { color: var(--sb-gold) !important; }
+.sb-item:hover                    { background: var(--sb-bg-item-hover) !important;
+                                    color: var(--sb-item-fg-hover) !important; }
+#sidebar.collapsed .sb-item       { justify-content: center !important;
+                                    padding-left: 0 !important; padding-right: 0 !important; }
+#sidebar.collapsed .sb-icon       { margin: 0 auto !important; }
+#sidebar.collapsed .sb-label      { opacity: 0 !important; width: 0 !important;
+                                    pointer-events: none !important; }
+.sb-toggle-btn                    { border-color: rgba(198,161,91,.2) !important;
+                                    color: rgba(198,161,91,.52) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 10. RESPONSIVIDADE — tablet
+ * ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  #sidebar      { width: var(--sb-w-mini) !important; }
+  #main-content { margin-left: var(--sb-w-mini); }
+  .sb-brand     { justify-content: center !important; padding: .85rem 0 .8rem !important; gap: 0 !important; }
+  .sb-logo-texto{ max-width: 0 !important; opacity: 0 !important; pointer-events: none !important; }
+  .sb-patch     { display: block !important; width: 50px !important; height: 50px !important; margin: 0 auto !important; }
+  .sb-label     { opacity: 0 !important; width: 0 !important; pointer-events: none !important; }
+  .sb-item      { justify-content: center !important;
+                  padding-left: 0 !important; padding-right: 0 !important; gap: 0 !important; }
+  .sb-icon      { margin: 0 auto !important; }
+  .sb-toggle-label { opacity: 0 !important; max-width: 0 !important; pointer-events: none !important; }
+  .sb-toggle-btn   { padding: 0 !important; border: none !important;
+                     background: transparent !important; border-radius: 0 !important; }
+  .sb-toggle-arrow { transform: rotate(180deg); }
+  .sb-search-btn span { display: none !important; }
+  .sb-search-btn { justify-content: center !important; }
+  .conc-selector-wrap { display: none; }
+}

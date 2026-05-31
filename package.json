@@ -1,0 +1,9 @@
+{
+  "name": "protocolo-01",
+  "version": "1.0.0",
+  "description": "PROTOCOLO 01 — Sistema de Estudos para Concursos",
+  "private": true,
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

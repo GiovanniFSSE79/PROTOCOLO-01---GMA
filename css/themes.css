@@ -1,0 +1,184 @@
+/* ════════════════════════════════════════════════════════════════════
+ * themes.css
+ * ────────────────────────────────────────────────────────────────────
+ * Overrides do tema claro + seletor de concurso.
+ * Deve ser carregado APÓS core.css para que o cascade funcione corretamente.
+ * ════════════════════════════════════════════════════════════════════ */
+
+
+/* ── MODO CLARO: Cronograma — fixes gerais ── */
+body.light .cron-week-nav{background:var(--surface)!important;border-color:var(--border)!important;}
+body.light .cron-week-label{color:var(--text)!important;}
+body.light .cron-week-btn{color:var(--muted)!important;border-color:var(--border2)!important;}
+body.light .cron-week-btn:hover{color:var(--p01-gold)!important;border-color:var(--p01-gold)!important;}
+body.light .cron-day-cell{background:var(--surface)!important;border-color:var(--border)!important;}
+body.light .cron-day-cell:hover{background:var(--surface2)!important;}
+body.light .cron-day-abbr{color:var(--muted)!important;}
+body.light .cron-day-num{color:var(--text)!important;}
+body.light .cron-day-cell.active{background:rgba(198,161,91,.08)!important;border-color:var(--p01-gold)!important;}
+body.light .cron-day-cell.active .cron-day-abbr{color:rgba(200,155,0,.7)!important;}
+body.light .cron-day-cell.active .cron-day-num{color:var(--p01-gold)!important;}
+body.light .cron-day-cell.done{background:rgba(22,163,74,.06)!important;border-color:rgba(22,163,74,.3)!important;}
+body.light .cron-day-dot{background:rgba(0,0,0,.2)!important;}
+body.light .cron-day-cell.active .cron-day-dot{background:var(--p01-gold)!important;}
+body.light .cron-day-cell.done .cron-day-dot{background:var(--green)!important;}
+/* Barra de header do cronograma */
+body.light .cron-header-bar{background:linear-gradient(90deg,#f0f0f0,#e8e8e8)!important;border:1px solid var(--border)!important;}
+body.light .cron-current-day{color:var(--p01-gold)!important;font-weight:800!important;}
+body.light .cron-current-date{color:var(--muted)!important;}
+body.light .cron-progress-mini{color:var(--muted)!important;}
+/* Cards de dia */
+body.light .day-header{background:var(--surface)!important;}
+body.light .day-num-badge{background:rgba(198,161,91,.08)!important;color:var(--p01-gold)!important;border-color:rgba(253,196,2,.2)!important;}
+body.light .day-num-badge.today-badge{background:var(--p01-gold)!important;color:#000000!important;border-color:var(--p01-gold)!important;}
+body.light .day-num-badge.done-badge{background:rgba(22,163,74,.12)!important;color:var(--green)!important;border-color:rgba(22,163,74,.3)!important;}
+body.light .day-name{color:var(--text)!important;}
+body.light .day-date-small{color:var(--muted)!important;}
+body.light .day-task-count{color:var(--muted)!important;}
+body.light .day-chev{stroke:var(--muted)!important;}
+body.light .day-body{background:var(--surface2)!important;}
+/* Tarefas dentro dos cards */
+body.light .task-item{border-bottom-color:rgba(0,0,0,.07)!important;background:transparent!important;}
+body.light .task-check{border-color:rgba(0,0,0,.25)!important;background:transparent!important;}
+body.light .task-check.done{background:var(--p01-gold)!important;border-color:var(--p01-gold)!important;}
+body.light .task-cat{color:var(--p01-gold)!important;}
+body.light .task-desc{color:var(--muted)!important;}
+body.light .task-item.done .task-cat{color:var(--dim)!important;}
+body.light .task-item.done .task-desc{color:var(--dim)!important;}
+/* Matérias/disciplinas */
+body.light .disc-group-header{background:linear-gradient(90deg,#1a1400,#2a0000)!important;}
+body.light .disc-group-name{color:#fff!important;}
+body.light .disc-group-pct{color:var(--p01-gold)!important;}
+body.light .disc-group-chev{stroke:rgba(255,255,255,.6)!important;}
+body.light .disc-group-body{background:var(--surface2)!important;}
+body.light .topic-item{border-bottom-color:rgba(0,0,0,.07)!important;}
+body.light .topic-text{color:var(--text)!important;}
+body.light .subtopic-item{border-bottom-color:rgba(0,0,0,.04)!important;}
+body.light .subtopic-text{color:var(--muted)!important;}
+body.light .disc-group-prog{background:rgba(0,0,0,.08)!important;}
+/* Progresso */
+body.light .prog-track{background:rgba(0,0,0,.08)!important;}
+body.light .prog-label-row span{color:var(--muted)!important;}
+/* Nome da matéria nos cards de disciplina */
+body.light .disc-name{color:var(--p01-gold)!important;}
+body.light .disc-input{color:var(--text)!important;background:var(--surface)!important;border-color:var(--border2)!important;}
+/* Nomes das matérias no progresso */
+body.light .cron-nav-month{color:var(--muted)!important;border-top-color:var(--border)!important;}
+/* Objetivo do Dia */
+body.light .cron-objetivo-card{background:var(--surface)!important;border-color:var(--border)!important;}
+body.light .cron-objetivo-text{color:var(--muted)!important;}
+body.light .cron-objetivo-label{color:var(--p01-gold)!important;}
+/* Cards de matéria do dia (Matérias do Dia) */
+body.light .cron-materia-card{background:var(--surface)!important;border-color:var(--border)!important;}
+body.light .cron-materia-name{color:var(--text)!important;}
+body.light .cron-materia-sub{color:var(--muted)!important;}
+body.light .cron-materia-pct-label{color:var(--muted)!important;}
+body.light .cron-materia-bar-track{background:rgba(0,0,0,.1)!important;}
+body.light .cron-materias-title{color:var(--muted)!important;}
+
+/* ── SELETOR DE CONCURSO ─────────────────── */
+.conc-selector-wrap{padding:.5rem .65rem .4rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+.conc-label{font-size:.5rem;font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.3rem;display:block}
+.conc-select-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:.32rem .55rem;background:rgba(245,200,0,.07);border:1px solid rgba(245,200,0,.25);border-radius:7px;cursor:pointer;color:var(--p01-gold);font-family:'Oswald',sans-serif;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;transition:background .15s}
+.conc-select-btn:hover{background:rgba(245,200,0,.13)}
+.conc-select-btn svg{flex-shrink:0;opacity:.6}
+#sidebar.collapsed .conc-selector-wrap{display:none}
+
+/* Modal seletor */
+.conc-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center}
+.conc-modal-overlay.open{display:flex}
+.conc-modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:min(420px,94vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+.conc-modal-header{padding:.9rem 1.1rem .7rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.conc-modal-title{font-family:'Oswald',sans-serif;font-size:1rem;font-weight:700;color:var(--p01-gold);text-transform:uppercase;letter-spacing:.06em}
+.conc-modal-body{padding:.75rem 1rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:.55rem}
+.conc-modal-footer{padding:.65rem 1rem;border-top:1px solid var(--border);display:flex;gap:.5rem;justify-content:flex-end;flex-shrink:0}
+.conc-card{padding:.6rem .85rem;border:1.5px solid #2a2a2a;border-radius:10px;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.02)}
+.conc-card:hover{border-color:#f5c800;background:rgba(245,200,0,.05)}
+.conc-card.active-conc{border-color:#f5c800;background:rgba(245,200,0,.09);box-shadow:0 0 0 1px #f5c800}
+.conc-card-name{font-family:'Oswald',sans-serif;font-size:.82rem;font-weight:700;color:var(--fg);text-transform:uppercase;letter-spacing:.04em}
+.conc-card-cargo{font-size:.67rem;color:var(--muted);margin-top:.1rem}
+.conc-card-badge{font-size:.55rem;font-family:'Oswald',sans-serif;font-weight:700;background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.3);border-radius:4px;padding:1px 7px;float:right;margin-top:.1rem}
+.conc-add-btn{padding:.55rem .85rem;border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;cursor:pointer;background:none;color:var(--muted);font-size:.72rem;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.06em;width:100%;transition:all .15s;text-align:left}
+.conc-add-btn:hover{border-color:rgba(245,200,0,.35);color:var(--p01-gold)}
+.conc-edit-badge{font-size:.55rem;padding:1px 7px;border-radius:4px;background:rgba(99,102,241,.15);color:#818cf8;border:1px solid rgba(99,102,241,.3);font-family:'Oswald',sans-serif;font-weight:700;cursor:pointer;float:right;margin-top:.1rem;margin-left:6px}
+/* ─────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════════════════════════════
+ * Fase 2.5 — Variable Bridge
+ * Mapeia vars legadas do core.css para os tokens p01-* atuais.
+ * Garante que dark e light mode funcionem sem texto branco em fundo claro.
+ * ════════════════════════════════════════════════════════════════════ */
+
+/* ── DARK mode bridge ───────────────────────────────────────────────── */
+:root {
+  --surface:       var(--p01-surface);
+  --surface2:      var(--p01-surface2);
+  --surface3:      var(--p01-surface3);
+  --bg:            var(--p01-bg);
+  --border:        var(--p01-border);
+  --border2:       var(--p01-border2);
+  --text:          var(--p01-text);
+  --muted:         var(--p01-text-muted);
+  --dim:           var(--p01-text-dim);
+  --gold:          var(--p01-gold);
+  --gold-vivid:    var(--p01-gold);
+  --green:         var(--p01-green);
+  --red:           var(--p01-red);
+  --blue:          var(--p01-blue);
+}
+
+/* ── LIGHT mode bridge ──────────────────────────────────────────────── */
+body.light {
+  --surface:       var(--p01-surface);
+  --surface2:      var(--p01-surface2);
+  --surface3:      var(--p01-surface3);
+  --bg:            var(--p01-bg);
+  --border:        var(--p01-border);
+  --border2:       var(--p01-border2);
+  --text:          var(--p01-text);
+  --muted:         var(--p01-text-muted);
+  --dim:           var(--p01-text-dim);
+  --gold:          var(--p01-gold);
+  --gold-vivid:    var(--p01-gold);
+  --green:         var(--p01-green);
+  --red:           var(--p01-red);
+  --blue:          var(--p01-blue);
+}
+
+/* ── LIGHT mode — fixes críticos de legibilidade ────────────────────── */
+
+/* Textos que herdam branco do core.css */
+body.light .sec-title,
+body.light .stat-v,
+body.light .stat-l,
+body.light .section-title-row h2,
+body.light h1, body.light h2, body.light h3 {
+  color: var(--p01-text) !important;
+}
+
+/* Cards e superfícies */
+body.light .stat-card,
+body.light .day-card,
+body.light .fc-deck-card,
+body.light .sim-card,
+body.light .foco-card,
+body.light .countdown-card,
+body.light .cron-objetivo-card {
+  background:   var(--p01-surface) !important;
+  border-color: var(--p01-border) !important;
+  color:        var(--p01-text) !important;
+}
+
+/* Background de abas */
+body.light .section { background: var(--p01-bg) !important; }
+body.light #main-content { background: var(--p01-bg) !important; }
+
+/* Scrollbar light */
+body.light ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15) !important; }
+body.light ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.25) !important; }
+
+/* ── Topbar light mode ─────────────────────────────────────────────── */
+body.light #topbar {
+  background:    rgba(255,255,255,.94) !important;
+  border-bottom: 1px solid rgba(0,0,0,.07) !important;
+}

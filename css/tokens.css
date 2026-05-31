@@ -1,0 +1,721 @@
+/* ════════════════════════════════════════════════════════════════════
+ * tokens.css — PROTOCOLO 01 · Fase 1.5
+ * ────────────────────────────────────────────────────────────────────
+ * Base Visual Global: Design Tokens, Tipografia, Sombras, Bordas,
+ * Espaçamentos, Scrollbar, Microinterações, Animações, Acessibilidade.
+ *
+ * ORDEM DE CARREGAMENTO (index.html):
+ *   1. tokens.css   ← este arquivo (base / variáveis)
+ *   2. core.css     ← componentes (herda os tokens)
+ *   3. cron-week-strip.css
+ *   4. themes.css   ← overrides do modo claro (último, sempre)
+ *
+ * GARANTIAS:
+ *   ✅ Zero quebra de funcionalidade
+ *   ✅ Zero alteração de localStorage
+ *   ✅ Zero alteração de IDs ou nomes de função
+ *   ✅ Zero alteração de handlers inline (onclick / oninput / onchange)
+ *   ✅ Compatível offline · file:/// · GitHub Pages · Vercel
+ *   ✅ Dark mode e Light mode preservados e refinados
+ *
+ * VERSÃO: Fase 1.5 — Release 1
+ * ════════════════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 1. DESIGN TOKENS — DARK MODE (default)
+ * ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+
+  /* ── Paleta de marca ──────────────────────────────────────────────── */
+  --p01-gold:            #C6A15B;
+  --p01-gold-muted:      #D4AF37;
+  --p01-gold-warm:       #b8943f;
+  --p01-gold-subtle:     rgba(198,161,91,.12);
+  --p01-gold-ghost:      rgba(198,161,91,.06);
+  --p01-gold-border:     rgba(198,161,91,.22);
+  --p01-gold-border2:    rgba(198,161,91,.38);
+
+  --p01-navy:            #082032;
+  --p01-navy-deep:       #061829;
+  --p01-navy-gradient:   linear-gradient(90deg, #082032, #061829);
+
+  --p01-green:           #4ade80;
+  --p01-green-subtle:    rgba(74,222,128,.12);
+  --p01-red:             #f87171;
+  --p01-red-subtle:      rgba(248,113,113,.12);
+  --p01-blue:            #60a5fa;
+  --p01-blue-subtle:     rgba(96,165,250,.12);
+  --p01-purple:          #a78bfa;
+  --p01-amber:           #fbbf24;
+
+  /* ── Superfícies dark ─────────────────────────────────────────────── */
+  --p01-bg:              #0f1115;
+  --p01-bg2:             #151922;
+  --p01-surface:         #1B2230;
+  --p01-surface2:        #1f2736;
+  --p01-surface3:        #243040;
+
+  /* ── Bordas dark ──────────────────────────────────────────────────── */
+  --p01-border:          rgba(255,255,255,.07);
+  --p01-border2:         rgba(255,255,255,.12);
+  --p01-border-neutral:  rgba(255,255,255,.07);
+
+  /* ── Texto dark ───────────────────────────────────────────────────── */
+  --p01-text:            #f0f0f8;
+  --p01-text-secondary:  rgba(240,240,248,.78);
+  --p01-text-muted:      #8888aa;
+  --p01-text-dim:        #555577;
+
+  /* ── Tipografia ───────────────────────────────────────────────────── */
+  --p01-font-display:    'Oswald', sans-serif;
+  --p01-font-body:       'Barlow', sans-serif;
+
+  /* Escala de tamanho */
+  --p01-text-xs:         0.56rem;   /* labels, badges         */
+  --p01-text-sm:         0.68rem;   /* metas, secundário      */
+  --p01-text-base:       0.78rem;   /* corpo padrão           */
+  --p01-text-md:         0.88rem;   /* títulos de card        */
+  --p01-text-lg:         1rem;      /* títulos de seção       */
+  --p01-text-xl:         1.2rem;    /* headings               */
+  --p01-text-2xl:        1.6rem;    /* números grandes        */
+  --p01-text-3xl:        2.4rem;    /* contadores / destaque  */
+
+  /* ── Espaçamentos ─────────────────────────────────────────────────── */
+  --p01-gap-xs:          0.25rem;
+  --p01-gap-sm:          0.5rem;
+  --p01-gap-md:          0.75rem;
+  --p01-gap-lg:          1rem;
+  --p01-gap-xl:          1.5rem;
+
+  /* ── Raios de borda ───────────────────────────────────────────────── */
+  --p01-radius-sm:       4px;
+  --p01-radius-md:       7px;
+  --p01-radius-lg:       10px;
+  --p01-radius-xl:       14px;
+  --p01-radius-pill:     999px;
+
+  /* ── Sombras dark ─────────────────────────────────────────────────── */
+  --p01-shadow-sm:       0 1px 4px rgba(0,0,0,.4);
+  --p01-shadow-md:       0 4px 14px rgba(0,0,0,.5);
+  --p01-shadow-lg:       0 8px 32px rgba(0,0,0,.6);
+  --p01-shadow-gold:     0 0 0 1px rgba(198,161,91,.20), 0 4px 18px rgba(198,161,91,.10);
+  --p01-shadow-card:     0 2px 8px rgba(0,0,0,.3);
+
+  /* ── Transições ───────────────────────────────────────────────────── */
+  --p01-ease:            cubic-bezier(0.4, 0, 0.2, 1);
+  --p01-ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+  --p01-dur-fast:        110ms;
+  --p01-dur-base:        180ms;
+  --p01-dur-slow:        320ms;
+
+  /* ── Z-index ──────────────────────────────────────────────────────── */
+  --p01-z-topbar:        200;
+  --p01-z-sidebar:       300;
+  --p01-z-overlay:       500;
+  --p01-z-timer:         600;
+  --p01-z-modal:         700;
+  --p01-z-result:        800;
+  --p01-z-search:        900;
+  --p01-z-conc:          9000;
+
+  /* ── Topbar ── */
+  --p01-topbar-h:        44px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 2. DESIGN TOKENS — LIGHT MODE
+ * ══════════════════════════════════════════════════════════════════════ */
+
+body.light {
+  --p01-bg:              #F5F7FA;
+  --p01-bg2:             #ECEEF2;
+  --p01-surface:         #FFFFFF;
+  --p01-surface2:        #F8FAFB;
+  --p01-surface3:        #F0F2F5;
+
+  --p01-border:          rgba(0,0,0,.08);
+  --p01-border2:         rgba(0,0,0,.14);
+  --p01-border-neutral:  rgba(0,0,0,.07);
+
+  --p01-gold:            #8a6e3a;
+  --p01-gold-muted:      #7a5f2a;
+  --p01-gold-subtle:     rgba(198,161,91,.10);
+  --p01-gold-ghost:      rgba(198,161,91,.05);
+  --p01-gold-border:     rgba(198,161,91,.22);
+  --p01-gold-border2:    rgba(198,161,91,.38);
+
+  --p01-text:            #0f1115;
+  --p01-text-secondary:  #2d3748;
+  --p01-text-muted:      #6b7280;
+  --p01-text-dim:        #9ca3af;
+
+  --p01-shadow-sm:       0 1px 3px rgba(0,0,0,.08);
+  --p01-shadow-md:       0 4px 14px rgba(0,0,0,.1);
+  --p01-shadow-lg:       0 8px 32px rgba(0,0,0,.14);
+  --p01-shadow-gold:     0 0 0 1px rgba(198,161,91,.18), 0 4px 18px rgba(198,161,91,.08);
+  --p01-shadow-card:     0 1px 4px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.05);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 3. FUNDAÇÃO GLOBAL — antialiasing e box-model
+ * ══════════════════════════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering:          optimizeLegibility;
+}
+
+/* Seleção de texto — branded */
+::selection {
+  background: rgba(198,161,91,.18);
+  color:      var(--p01-text);
+}
+body.light ::selection {
+  background: rgba(138,110,58,.14);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 4. SCROLLBAR — refinada, discreta, branded
+ * ══════════════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar              { width: 4px; height: 4px; }
+::-webkit-scrollbar-track        { background: transparent; }
+::-webkit-scrollbar-thumb        { background: rgba(198,161,91,.30); border-radius: var(--p01-radius-pill); }
+::-webkit-scrollbar-thumb:hover  { background: rgba(198,161,91,.50); }
+::-webkit-scrollbar-corner       { background: transparent; }
+
+body.light ::-webkit-scrollbar-thumb       { background: rgba(138,110,58,.28); }
+body.light ::-webkit-scrollbar-thumb:hover { background: rgba(138,110,58,.48); }
+
+/* Firefox */
+*             { scrollbar-width: thin; scrollbar-color: rgba(198,161,91,.30) transparent; }
+body.light *  { scrollbar-color: rgba(138,110,58,.28) transparent; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 5. TIPOGRAFIA — refinamentos globais
+ * ══════════════════════════════════════════════════════════════════════ */
+
+body {
+  font-family:    var(--p01-font-body);
+  font-size:      var(--p01-text-base);
+  line-height:    1.55;
+  letter-spacing: 0.01em;
+}
+
+/* Corpos de leitura longa — mais confortável */
+.res-card-body,
+.qc-enunciado,
+.err-card-body,
+.fc-face-content,
+.qc-result-gab,
+.quest-result-gab,
+.donut-q-enunciado,
+.qc-texto-ref-body {
+  line-height: 1.72;
+}
+
+/* Rótulos uppercase — espaçamento padronizado */
+.sec-title,
+.stat-l,
+.sb-label,
+.task-cat,
+.disc-name,
+.foco-task-cat,
+.sim-setup-title,
+.edit-section-title,
+.edit-modal-title {
+  letter-spacing: 0.07em;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 6. MICROINTERAÇÕES — transições consistentes em todo o sistema
+ * ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Sidebar ─────────────────────────────────────────────────────── */
+#sidebar        { transition: width var(--p01-dur-base) var(--p01-ease); }
+#main-content   { transition: margin-left var(--p01-dur-base) var(--p01-ease); }
+
+.sb-item {
+  transition:
+    background  var(--p01-dur-base) var(--p01-ease),
+    color       var(--p01-dur-base) var(--p01-ease);
+}
+
+/* Tooltip — aparição discreta */
+#sidebar.collapsed .sb-item:hover .sb-tooltip {
+  animation: p01-fade-in var(--p01-dur-fast) var(--p01-ease) both;
+}
+
+/* ── Cards interativos ───────────────────────────────────────────── */
+.stat-card,
+.day-card,
+.disc-item,
+.fc-deck-card,
+.sim-card,
+.res-card,
+.qc-card,
+.foco-task,
+.err-card,
+.disc-group,
+.q-mat-group,
+.leit-law-group,
+.donut-stat-row.clickable,
+.search-result-item,
+.conc-card,
+.me-card,
+.rev-item,
+.sessao-card {
+  transition:
+    border-color var(--p01-dur-base) var(--p01-ease),
+    box-shadow   var(--p01-dur-base) var(--p01-ease),
+    background   var(--p01-dur-base) var(--p01-ease);
+}
+
+/* ── Botões de ação ──────────────────────────────────────────────── */
+.sim-btn,
+.btn-add,
+.bq-status-btn,
+.bq-filtro-btn,
+.err-filter-btn,
+.qc-nav-btn,
+.quest-nav-btn,
+.result-btn,
+.res-mat-tab,
+.sim-tab-btn,
+.sim-modo-btn,
+.err-mat-chip,
+.motivo-chip,
+.leit-art-btn,
+.sb-toggle-btn,
+.sb-search-btn,
+.sb-theme-btn,
+.conc-select-btn,
+.conc-add-btn,
+.qc-btn-edit,
+.res-card-btn,
+.fmt-btn,
+.err-del,
+.reset-btn,
+.cfg-task-opt,
+.cfg-task-type {
+  transition:
+    background    var(--p01-dur-base) var(--p01-ease),
+    border-color  var(--p01-dur-base) var(--p01-ease),
+    color         var(--p01-dur-base) var(--p01-ease),
+    opacity       var(--p01-dur-fast) var(--p01-ease);
+}
+
+/* Feedback de pressão — botões primários */
+.sim-btn:active,
+.btn-add:active,
+.qc-nav-btn:active,
+.quest-nav-btn:active,
+.result-btn:active,
+.bq-filtro-btn:active {
+  transform: translateY(1px);
+}
+
+/* ── Checkboxes — spring ao marcar ───────────────────────────────── */
+.task-check,
+.tcheck,
+.stcheck,
+.foco-task-check {
+  transition:
+    background    var(--p01-dur-fast) var(--p01-ease),
+    border-color  var(--p01-dur-fast) var(--p01-ease),
+    transform     var(--p01-dur-fast) var(--p01-ease-spring);
+}
+.task-check:active,
+.tcheck:active,
+.stcheck:active {
+  transform: scale(0.88);
+}
+
+/* ── Chevrons — rotação suave ─────────────────────────────────────── */
+.day-chev,
+.disc-group-chev,
+.q-mat-chev,
+.leit-law-chev {
+  transition: transform var(--p01-dur-slow) var(--p01-ease);
+}
+
+/* ── Inputs e selects ────────────────────────────────────────────── */
+.disc-input,
+.q-input,
+.res-input,
+.res-textarea,
+.sim-input,
+.sim-select,
+.bq-search,
+.bq-sel,
+.quest-mat-sel,
+.qc-mat-sel,
+.search-modal-input {
+  transition:
+    border-color var(--p01-dur-base) var(--p01-ease),
+    box-shadow   var(--p01-dur-base) var(--p01-ease);
+}
+
+/* ── Progress bars ───────────────────────────────────────────────── */
+.prog-fill,
+.disc-prog-fill,
+.disc-group-prog-fill,
+.q-prog-fill,
+.leit-prog-fill,
+.fc-sess-fill,
+.timer-progress-fill,
+.qc-progress-fill,
+.cron-materia-bar-fill {
+  transition: width 0.55s var(--p01-ease);
+}
+
+/* ── Flashcard flip ──────────────────────────────────────────────── */
+.fc-card-wrap {
+  transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Rating buttons do flashcard ─────────────────────────────────── */
+.fc-rating-btn {
+  transition:
+    background    var(--p01-dur-base) var(--p01-ease),
+    border-color  var(--p01-dur-base) var(--p01-ease),
+    transform     var(--p01-dur-fast) var(--p01-ease);
+}
+.fc-rating-btn:active { transform: scale(0.95); }
+
+/* ── Opções de questão ───────────────────────────────────────────── */
+.qc-opcao {
+  transition:
+    border-color var(--p01-dur-base) var(--p01-ease),
+    background   var(--p01-dur-base) var(--p01-ease);
+}
+.qc-opcao-circulo {
+  transition:
+    background   var(--p01-dur-fast) var(--p01-ease),
+    border-color var(--p01-dur-fast) var(--p01-ease);
+}
+.gab-btn,
+.quest-opt {
+  transition:
+    background   var(--p01-dur-base) var(--p01-ease),
+    border-color var(--p01-dur-base) var(--p01-ease),
+    color        var(--p01-dur-base) var(--p01-ease);
+}
+.qc-tesoura-btn {
+  transition:
+    opacity      var(--p01-dur-base) var(--p01-ease),
+    background   var(--p01-dur-base) var(--p01-ease),
+    color        var(--p01-dur-base) var(--p01-ease);
+}
+
+/* ── Seções — fade in ao ativar ─────────────────────────────────── */
+.section.active {
+  animation: p01-fade-in var(--p01-dur-slow) var(--p01-ease) both;
+}
+
+/* ── Accordions abertos ─────────────────────────────────────────── */
+.day-body.open,
+.disc-group-body.open,
+.q-mat-body.open,
+.leit-law-body.open {
+  animation: p01-slide-down var(--p01-dur-base) var(--p01-ease) both;
+}
+
+/* ── Modais — fade in ao aparecer ───────────────────────────────── */
+.edit-modal-overlay.open .edit-modal,
+.search-modal-overlay.open .search-modal,
+.result-overlay.open .result-modal,
+.donut-modal-overlay.open .donut-modal,
+.conc-modal-overlay.open .conc-modal {
+  animation: p01-fade-in var(--p01-dur-slow) var(--p01-ease) both;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 7. ANIMAÇÕES — keyframes
+ * ══════════════════════════════════════════════════════════════════════ */
+
+@keyframes p01-fade-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes p01-slide-down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Preserva os keyframes originais do core.css */
+@keyframes pulse {
+  0%, 100% { opacity: 1;    }
+  50%       { opacity: 0.45; }
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 0; }
+  35%       { opacity: 1; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 8. INPUTS — foco com ring dourado
+ * ══════════════════════════════════════════════════════════════════════ */
+
+.disc-input:focus,
+.q-input:focus,
+.res-input:focus,
+.res-textarea:focus,
+.sim-input:focus,
+.bq-search:focus {
+  border-color: var(--p01-gold) !important;
+  box-shadow:   0 0 0 2px rgba(198,161,91,.10) !important;
+  outline:      none;
+}
+body.light .disc-input:focus,
+body.light .q-input:focus,
+body.light .res-input:focus,
+body.light .res-textarea:focus,
+body.light .sim-input:focus,
+body.light .bq-search:focus {
+  box-shadow: 0 0 0 2px rgba(138,110,58,.08) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 9. CARDS — sombra ao hover e estados especiais
+ * ══════════════════════════════════════════════════════════════════════ */
+
+.stat-card:hover,
+.day-card:hover,
+.fc-deck-card:hover,
+.sim-card:hover {
+  box-shadow: var(--p01-shadow-card);
+}
+.day-card.today,
+.fc-deck-card.active {
+  box-shadow: var(--p01-shadow-gold);
+}
+
+body.light .stat-card:hover,
+body.light .day-card:hover,
+body.light .fc-deck-card:hover,
+body.light .sim-card:hover {
+  box-shadow: var(--p01-shadow-card);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 10. HOVER STATES — botões e elementos interativos
+ * ══════════════════════════════════════════════════════════════════════ */
+
+/* Primários — brilho sutil */
+.btn-add:hover,
+.sim-btn.start:hover,
+.qc-nav-btn.confirmar:hover,
+.qc-nav-btn.next:hover,
+.quest-nav-btn.next:hover,
+.result-btn.save:hover {
+  opacity: 0.88;
+  filter:  brightness(1.04);
+}
+
+/* Destrutivos — vermelho */
+.sim-btn.del:hover,
+.res-card-btn.del:hover,
+.err-del:hover,
+.reset-btn.danger:hover {
+  border-color: var(--p01-red) !important;
+  color:        var(--p01-red) !important;
+}
+
+/* Ações secundárias — dourado */
+.res-card-btn:hover,
+.qc-btn-edit:hover {
+  border-color: var(--p01-gold) !important;
+  color:        var(--p01-gold) !important;
+}
+
+/* Tabs e modos — hover dourado */
+.sim-modo-btn:hover:not(.active),
+.sim-tab-btn:hover:not(.active),
+.res-mat-tab:hover:not(.active) {
+  color:        var(--p01-gold) !important;
+  border-color: var(--p01-gold-border) !important;
+}
+
+/* Filtros — hover dourado */
+.bq-filtro-btn:hover:not(.active),
+.err-filter-btn:hover:not(.active) {
+  border-color: var(--p01-gold) !important;
+  color:        var(--p01-gold) !important;
+}
+
+/* Resultados de busca */
+.search-result-item:hover {
+  border-color: var(--p01-border2) !important;
+  box-shadow:   var(--p01-shadow-sm);
+}
+
+/* Leit art btn */
+.leit-art-btn {
+  transition:
+    background   var(--p01-dur-base) var(--p01-ease),
+    border-color var(--p01-dur-base) var(--p01-ease),
+    color        var(--p01-dur-base) var(--p01-ease);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 11. PERFORMANCE — content-visibility em seções inativas
+ * ══════════════════════════════════════════════════════════════════════ */
+
+.section:not(.active) { content-visibility: hidden;  }
+.section.active        { content-visibility: visible; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 12. ACESSIBILIDADE — focus-visible para navegação por teclado
+ * ══════════════════════════════════════════════════════════════════════ */
+
+:focus-visible {
+  outline:        2px solid rgba(198,161,91,.55);
+  outline-offset: 2px;
+  border-radius:  3px;
+}
+body.light :focus-visible {
+  outline-color: rgba(138,110,58,.50);
+}
+
+/* Remove outline apenas onde não há focus-visible */
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 13. CURSORES — consistência em elementos clicáveis
+ * ══════════════════════════════════════════════════════════════════════ */
+
+.sb-item,
+.day-header,
+.disc-group-header,
+.q-mat-header,
+.leit-law-header,
+.cfg-dia-header,
+.task-item,
+.foco-task,
+.tcheck,
+.stcheck,
+.topic-item,
+.leit-art-btn,
+.fc-deck-card,
+.fc-scene,
+.qc-opcao,
+.gab-btn,
+.quest-opt,
+.qmap-dot,
+.donut-stat-row.clickable,
+.search-result-item,
+.depois-tag,
+.err-filter-btn,
+.motivo-chip,
+.err-mat-chip {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled {
+  cursor:  not-allowed;
+  opacity: 0.38;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 14. RESPONSIVIDADE — tablet (desktop-first, sem reestruturar layouts)
+ * ══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  /* Sidebar recolhe automaticamente em tablet */
+  #sidebar { width: 52px; }
+  #main-content { margin-left: 52px; }
+
+  #sidebar .sb-label,
+  #sidebar .sb-brand-text,
+  #sidebar .sb-toggle-label,
+  #sidebar .sb-cd-label,
+  #sidebar .sb-search-btn span:last-child,
+  #sidebar .sb-theme-btn span:last-child {
+    display: none;
+  }
+  #sidebar .sb-item {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  #sidebar .sb-icon       { margin: 0 auto; }
+  #sidebar .sb-toggle-btn {
+    padding: 0; border: none;
+    background: transparent; border-radius: 0;
+  }
+  #sidebar .sb-brand {
+    justify-content: center;
+    padding: 0.6rem 0; gap: 0;
+  }
+  #sidebar .sb-logo-texto {
+    max-width: 0; opacity: 0;
+    overflow: hidden; pointer-events: none;
+  }
+  #sidebar .sb-patch           { display: flex !important; }
+  #sidebar .sb-toggle-arrow    { transform: rotate(180deg); }
+  #sidebar .conc-selector-wrap { display: none; }
+}
+
+@media (max-width: 900px) {
+  .stat-grid.four  { grid-template-columns: repeat(2, 1fr); }
+  .stat-grid.three { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .section        { padding: 0.75rem; }
+  .sim-form-row,
+  .res-form-row,
+  .bq-filtros-row { flex-wrap: wrap; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 15. BACKGROUNDS GLOBAIS — dark e light
+ * ══════════════════════════════════════════════════════════════════════ */
+
+body {
+  background: var(--p01-bg);
+}
+
+#main-content {
+  background: var(--p01-bg);
+  min-height: 100vh;
+}
+
+.section {
+  background: var(--p01-bg);
+  padding-top: calc(var(--p01-topbar-h) + 0.75rem);
+}
+
+body.light,
+body.light #main-content,
+body.light .section {
+  background: var(--p01-bg);
+}

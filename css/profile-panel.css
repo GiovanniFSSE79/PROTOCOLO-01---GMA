@@ -1,0 +1,1023 @@
+/* ════════════════════════════════════════════════════════════════════
+ * profile-panel.css — PROTOCOLO 01 · Fase 2.2
+ * ────────────────────────────────────────────────────────────────────
+ * Aba "Perfil" — painel premium de conta e preferências.
+ * Identidade: azul petróleo + dourado queimado · SaaS premium.
+ *
+ * ARQUITETURA:
+ *   Este arquivo carrega APÓS sidebar.css e ANTES de themes.css.
+ *   Estilos isolados sob o seletor #tab-perfil — zero colisão com
+ *   outros componentes do sistema.
+ *
+ * GARANTIAS:
+ *   ✅ Zero alteração em outros componentes
+ *   ✅ Dark mode + Light mode preservados
+ *   ✅ Usa tokens --p01-* da Fase 1.5
+ *   ✅ Compatibilidade offline · file:///
+ * ════════════════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * TOKENS LOCAIS — profile-panel
+ * ══════════════════════════════════════════════════════════════════════ */
+:root {
+  --pp-surface:        #111c2b;
+  --pp-surface-deep:   #0c1623;
+  --pp-surface-raise:  #15243a;
+  --pp-border:         rgba(198,161,91,.18);
+  --pp-border-soft:    rgba(255,255,255,.07);
+  --pp-text:           rgba(255,255,255,.92);
+  --pp-text-2:         rgba(255,255,255,.62);
+  --pp-text-muted:     rgba(255,255,255,.4);
+  --pp-text-dim:       rgba(255,255,255,.25);
+  --pp-gold:           #C6A15B;
+  --pp-gold-bright:    #D4AF37;
+  --pp-gold-subtle:    rgba(198,161,91,.1);
+  --pp-gold-border:    rgba(198,161,91,.32);
+  --pp-green:          #4ade80;
+  --pp-red:            #f87171;
+  --pp-ease:           cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light {
+  --pp-surface:        #ffffff;
+  --pp-surface-deep:   #f6f6f6;
+  --pp-surface-raise:  #fafafa;
+  --pp-border:         rgba(160,110,0,.18);
+  --pp-border-soft:    rgba(0,0,0,.06);
+  --pp-text:           #0f1225;
+  --pp-text-2:         rgba(15,18,37,.7);
+  --pp-text-muted:     rgba(15,18,37,.45);
+  --pp-text-dim:       rgba(15,18,37,.28);
+  --pp-gold:           #8a6400;
+  --pp-gold-bright:    #6e5000;
+  --pp-gold-subtle:    rgba(138,100,0,.06);
+  --pp-gold-border:    rgba(138,100,0,.28);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 1. CONTAINER PRINCIPAL
+ * ══════════════════════════════════════════════════════════════════════ */
+#tab-perfil {
+  /* Padding escala com o viewport: confortável em telas pequenas,
+     respira em monitores grandes. Sem max-width — usa toda a largura. */
+  padding:    1.5rem clamp(1rem, 4vw, 3rem) 3rem;
+  width:      100%;
+  box-sizing: border-box;
+}
+
+/* Layout em grade — Perfil em 2 colunas em telas largas, 1 coluna em telas
+   menores. Mantém o conteúdo respirando sem ficar "perdido" em monitores grandes. */
+.pp-layout {
+  display:               grid;
+  grid-template-columns: 1fr;
+  gap:                   1rem;
+}
+
+@media (min-width: 1280px) {
+  .pp-layout-2col {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+/* Header da aba */
+.pp-header {
+  display:        flex;
+  align-items:    center;
+  justify-content:space-between;
+  gap:            1.5rem;
+  padding-bottom: 1.2rem;
+  border-bottom:  1px solid var(--pp-border-soft);
+  margin-bottom:  1.5rem;
+  flex-wrap:      wrap;
+}
+.pp-header-left {
+  display:     flex;
+  align-items: center;
+  gap:         1rem;
+}
+.pp-header-title {
+  font-family:    'Oswald', sans-serif;
+  font-size:      1.6rem;
+  font-weight:    700;
+  color:          var(--pp-text);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  line-height:    1;
+}
+.pp-header-subtitle {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .8rem;
+  font-weight: 400;
+  color:       var(--pp-text-muted);
+  margin-top:  .35rem;
+}
+
+.pp-save-indicator {
+  display:        flex;
+  align-items:    center;
+  gap:            7px;
+  padding:        .42rem .85rem;
+  background:     var(--pp-gold-subtle);
+  border:         1px solid var(--pp-gold-border);
+  border-radius:  99px;
+  font-family:    'Oswald', sans-serif;
+  font-size:      .65rem;
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color:          var(--pp-gold);
+  opacity:        0;
+  transform:      translateY(-6px);
+  transition:     opacity .25s var(--pp-ease), transform .25s var(--pp-ease);
+  pointer-events: none;
+}
+.pp-save-indicator.shown {
+  opacity: 1; transform: translateY(0);
+}
+.pp-save-indicator::before {
+  content:    '';
+  width:      6px; height: 6px;
+  border-radius: 50%;
+  background: var(--pp-green);
+  box-shadow: 0 0 8px rgba(74,222,128,.6);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 2. NAV INTERNA — tabs (Perfil · Aparência · Experiência · Dados)
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-tabs {
+  display:       flex;
+  gap:           .25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--pp-border-soft);
+  flex-wrap:     wrap;
+}
+
+.pp-tab {
+  position:        relative;
+  display:         flex;
+  align-items:     center;
+  gap:             8px;
+  padding:         .65rem 1.1rem;
+  background:      transparent;
+  border:          none;
+  cursor:          pointer;
+  color:           var(--pp-text-muted);
+  font-family:     'Oswald', sans-serif;
+  font-size:       .72rem;
+  font-weight:     600;
+  text-transform:  uppercase;
+  letter-spacing:  .07em;
+  transition:      color .16s var(--pp-ease);
+  border-bottom:   2px solid transparent;
+  margin-bottom:   -1px;
+}
+.pp-tab:hover { color: var(--pp-text-2); }
+.pp-tab.active {
+  color:         var(--pp-gold);
+  border-bottom-color: var(--pp-gold);
+}
+.pp-tab svg {
+  width: 16px; height: 16px;
+  opacity: .65;
+  transition: opacity .16s var(--pp-ease);
+}
+.pp-tab:hover svg,
+.pp-tab.active svg { opacity: 1; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 3. PANEL — wrapper de subseção
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-panel {
+  display:    none;
+  animation:  pp-fade-in .25s var(--pp-ease) both;
+}
+.pp-panel.active { display: block; }
+
+@keyframes pp-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 4. CARD — bloco fundamental
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-card {
+  background:    var(--pp-surface);
+  border:        1px solid var(--pp-border-soft);
+  border-radius: 12px;
+  padding:       1.25rem 1.4rem;
+  margin-bottom: 1rem;
+  transition:    border-color .18s var(--pp-ease);
+}
+.pp-card:hover { border-color: var(--pp-border); }
+
+.pp-card-header {
+  margin-bottom: 1rem;
+}
+.pp-card-title {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .9rem;
+  font-weight:    700;
+  color:          var(--pp-text);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  line-height:    1.2;
+  margin-bottom:  .2rem;
+}
+.pp-card-desc {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .75rem;
+  font-weight: 400;
+  color:       var(--pp-text-muted);
+  line-height: 1.5;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 5. PERFIL — card de identidade
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-identity {
+  display:     flex;
+  align-items: center;
+  gap:         1.4rem;
+  flex-wrap:   wrap;
+  margin-bottom: 1.5rem;
+}
+
+.pp-avatar-big {
+  width:           96px;
+  height:          96px;
+  border-radius:   50%;
+  background:      linear-gradient(135deg, #1a3a5c 0%, #0d2238 100%);
+  border:          2px solid var(--pp-gold-border);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-family:     'Oswald', sans-serif;
+  font-size:       2.4rem;
+  font-weight:     700;
+  color:           var(--pp-gold);
+  text-transform:  uppercase;
+  flex-shrink:     0;
+  box-shadow:      0 8px 28px rgba(0,0,0,.5),
+                   0 0 0 1px rgba(198,161,91,.1),
+                   inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.pp-identity-info {
+  flex:           1;
+  min-width:      0;
+  display:        flex;
+  flex-direction: column;
+  gap:            .25rem;
+}
+.pp-identity-name {
+  font-family:    'Oswald', sans-serif;
+  font-size:      1.4rem;
+  font-weight:    700;
+  color:          var(--pp-text);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  line-height:    1.1;
+}
+.pp-identity-email {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .85rem;
+  color:       var(--pp-text-2);
+}
+.pp-identity-badge {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            6px;
+  margin-top:     .45rem;
+  padding:        .25rem .65rem;
+  background:     rgba(74,222,128,.1);
+  border:         1px solid rgba(74,222,128,.28);
+  border-radius:  99px;
+  font-family:    'Oswald', sans-serif;
+  font-size:      .58rem;
+  font-weight:    700;
+  color:          var(--pp-green);
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  width:          fit-content;
+}
+.pp-identity-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--pp-green);
+}
+
+body.light .pp-identity-badge {
+  background: rgba(22,163,74,.08);
+  color: #16a34a;
+  border-color: rgba(22,163,74,.3);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 6. FORM FIELDS
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-field {
+  display:        flex;
+  flex-direction: column;
+  gap:            .4rem;
+  margin-bottom:  1rem;
+}
+.pp-field:last-child { margin-bottom: 0; }
+
+.pp-label {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .6rem;
+  font-weight:    700;
+  color:          var(--pp-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.pp-input {
+  display:       block;
+  width:         100%;
+  padding:       .65rem .9rem;
+  background:    var(--pp-surface-deep);
+  border:        1px solid var(--pp-border-soft);
+  border-radius: 8px;
+  font-family:   'Barlow', sans-serif;
+  font-size:     .85rem;
+  color:         var(--pp-text);
+  outline:       none;
+  transition:    border-color .16s var(--pp-ease),
+                 box-shadow .16s var(--pp-ease),
+                 background .16s var(--pp-ease);
+}
+.pp-input:focus {
+  border-color: var(--pp-gold);
+  box-shadow:   0 0 0 3px rgba(198,161,91,.1);
+  background:   var(--pp-surface-raise);
+}
+.pp-input:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+.pp-input::placeholder { color: var(--pp-text-dim); }
+
+body.light .pp-input {
+  background: #ffffff;
+  border-color: rgba(0,0,0,.1);
+}
+body.light .pp-input:focus {
+  border-color: var(--pp-gold);
+  box-shadow: 0 0 0 3px rgba(138,100,0,.1);
+}
+
+.pp-help {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .68rem;
+  color:       var(--pp-text-muted);
+  margin-top:  -.1rem;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 7. ROW — linha de preferência (label + control)
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-row {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             1rem;
+  padding:         .9rem 0;
+  border-bottom:   1px solid var(--pp-border-soft);
+}
+.pp-row:last-child { border-bottom: none; padding-bottom: .15rem; }
+.pp-row:first-child { padding-top: .15rem; }
+
+.pp-row-info {
+  flex: 1;
+  min-width: 0;
+}
+.pp-row-title {
+  font-family:  'Barlow', sans-serif;
+  font-size:    .88rem;
+  font-weight:  600;
+  color:        var(--pp-text);
+  line-height:  1.3;
+}
+.pp-row-desc {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .72rem;
+  font-weight: 400;
+  color:       var(--pp-text-muted);
+  line-height: 1.4;
+  margin-top:  .15rem;
+}
+.pp-row-control {
+  flex-shrink: 0;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 8. SWITCH — toggle premium
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-switch {
+  position:      relative;
+  display:       inline-block;
+  width:         42px;
+  height:        24px;
+  border-radius: 99px;
+  background:    rgba(255,255,255,.08);
+  border:        1px solid var(--pp-border-soft);
+  cursor:        pointer;
+  transition:    background .2s var(--pp-ease),
+                 border-color .2s var(--pp-ease);
+  flex-shrink:   0;
+}
+.pp-switch::after {
+  content:       '';
+  position:      absolute;
+  top:           50%;
+  left:          3px;
+  transform:     translateY(-50%);
+  width:         16px;
+  height:        16px;
+  border-radius: 50%;
+  background:    rgba(255,255,255,.55);
+  transition:    left .22s var(--pp-ease),
+                 background .2s var(--pp-ease);
+  box-shadow:    0 2px 5px rgba(0,0,0,.4);
+}
+.pp-switch:hover { border-color: var(--pp-gold-border); }
+
+.pp-switch.on {
+  background:   var(--pp-gold);
+  border-color: var(--pp-gold);
+}
+.pp-switch.on::after {
+  left: 20px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,.3);
+}
+
+body.light .pp-switch {
+  background: rgba(0,0,0,.08);
+  border-color: rgba(0,0,0,.1);
+}
+body.light .pp-switch::after { background: #fff; }
+body.light .pp-switch.on {
+  background: var(--pp-gold);
+  border-color: var(--pp-gold);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 9. SEGMENT — grupo de botões (radio-like)
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-segment {
+  display:       inline-flex;
+  background:    var(--pp-surface-deep);
+  border:        1px solid var(--pp-border-soft);
+  border-radius: 9px;
+  padding:       3px;
+  gap:           2px;
+}
+.pp-segment-btn {
+  display:        flex;
+  align-items:    center;
+  gap:            6px;
+  padding:        .42rem .85rem;
+  background:     transparent;
+  border:         none;
+  border-radius:  6px;
+  cursor:         pointer;
+  color:          var(--pp-text-muted);
+  font-family:    'Oswald', sans-serif;
+  font-size:      .65rem;
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  transition:     background .15s var(--pp-ease),
+                  color .15s var(--pp-ease);
+}
+.pp-segment-btn:hover { color: var(--pp-text-2); }
+.pp-segment-btn.active {
+  background: var(--pp-gold);
+  color:      #0a1929;
+}
+.pp-segment-btn svg {
+  width: 14px; height: 14px;
+}
+
+body.light .pp-segment {
+  background: #fafafa;
+  border-color: rgba(0,0,0,.08);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 10. SELECT — refinado
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-select {
+  display:       block;
+  min-width:     180px;
+  padding:       .55rem 2.2rem .55rem .85rem;
+  background:    var(--pp-surface-deep);
+  border:        1px solid var(--pp-border-soft);
+  border-radius: 8px;
+  font-family:   'Barlow', sans-serif;
+  font-size:     .82rem;
+  color:         var(--pp-text);
+  outline:       none;
+  cursor:        pointer;
+  appearance:    none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C6A15B' stroke-width='2.5'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat:  no-repeat;
+  background-position: right .7rem center;
+  background-size:    14px;
+  transition: border-color .16s var(--pp-ease), box-shadow .16s var(--pp-ease);
+}
+.pp-select:focus {
+  border-color: var(--pp-gold);
+  box-shadow:   0 0 0 3px rgba(198,161,91,.1);
+}
+body.light .pp-select {
+  background-color: #ffffff;
+  border-color: rgba(0,0,0,.1);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 11. BUTTONS — ações
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-btn {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             7px;
+  padding:         .55rem 1.1rem;
+  border-radius:   8px;
+  border:          1px solid transparent;
+  cursor:          pointer;
+  font-family:     'Oswald', sans-serif;
+  font-size:       .7rem;
+  font-weight:     600;
+  text-transform:  uppercase;
+  letter-spacing:  .07em;
+  transition:
+    background .16s var(--pp-ease),
+    border-color .16s var(--pp-ease),
+    color .16s var(--pp-ease),
+    opacity .12s var(--pp-ease);
+  white-space: nowrap;
+}
+.pp-btn-primary {
+  background: var(--pp-gold);
+  color: #0a1929;
+}
+.pp-btn-primary:hover { opacity: .9; filter: brightness(1.05); }
+.pp-btn-primary:active { transform: translateY(1px); }
+
+.pp-btn-secondary {
+  background: transparent;
+  border-color: var(--pp-gold-border);
+  color: var(--pp-gold);
+}
+.pp-btn-secondary:hover {
+  background: var(--pp-gold-subtle);
+  border-color: var(--pp-gold);
+}
+
+.pp-btn-ghost {
+  background: transparent;
+  color: var(--pp-text-muted);
+  border-color: var(--pp-border-soft);
+}
+.pp-btn-ghost:hover { color: var(--pp-text-2); border-color: var(--pp-border); }
+
+.pp-btn-danger {
+  background: transparent;
+  border-color: rgba(248,113,113,.32);
+  color: var(--pp-red);
+}
+.pp-btn-danger:hover {
+  background: rgba(248,113,113,.08);
+  border-color: var(--pp-red);
+}
+
+.pp-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.pp-actions {
+  display:    flex;
+  gap:        .55rem;
+  margin-top: 1.2rem;
+  flex-wrap:  wrap;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 12. DADOS & BACKUP — status cards
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-status-grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:                   .9rem;
+  margin-bottom:         1.2rem;
+}
+
+.pp-status-item {
+  display:        flex;
+  align-items:    flex-start;
+  gap:            .85rem;
+  padding:        1rem 1.1rem;
+  background:     var(--pp-surface-deep);
+  border:         1px solid var(--pp-border-soft);
+  border-radius:  10px;
+}
+.pp-status-icon {
+  width:           38px;
+  height:          38px;
+  border-radius:   9px;
+  background:      var(--pp-gold-subtle);
+  color:           var(--pp-gold);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+.pp-status-icon svg { width: 18px; height: 18px; }
+.pp-status-info { flex: 1; min-width: 0; }
+.pp-status-label {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .58rem;
+  font-weight:    700;
+  color:          var(--pp-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom:  .2rem;
+}
+.pp-status-value {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .92rem;
+  font-weight: 600;
+  color:       var(--pp-text);
+  line-height: 1.2;
+}
+.pp-status-sub {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .68rem;
+  color:       var(--pp-text-muted);
+  margin-top:  .15rem;
+}
+
+/* Cloud item — estado especial */
+.pp-status-item.cloud .pp-status-icon {
+  background: rgba(96,165,250,.1);
+  color: #60a5fa;
+}
+.pp-status-item.cloud .pp-status-sub {
+  color: rgba(96,165,250,.65);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 13. CONNECT CARD — espaço para futuro login Google
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-connect {
+  padding:        1.25rem 1.4rem;
+  background:     linear-gradient(135deg,
+                                  rgba(96,165,250,.06) 0%,
+                                  rgba(198,161,91,.04) 100%);
+  border:         1px dashed rgba(96,165,250,.3);
+  border-radius:  12px;
+  text-align:     center;
+}
+.pp-connect-icon {
+  width:           48px;
+  height:          48px;
+  border-radius:   12px;
+  background:      rgba(96,165,250,.1);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  margin:          0 auto .7rem;
+  color:           #60a5fa;
+}
+.pp-connect-icon svg { width: 22px; height: 22px; }
+.pp-connect-title {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .9rem;
+  font-weight:    700;
+  color:          var(--pp-text);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom:  .35rem;
+}
+.pp-connect-desc {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .8rem;
+  color:       var(--pp-text-muted);
+  line-height: 1.55;
+  max-width:   460px;
+  margin:      0 auto .9rem;
+}
+.pp-connect-btn-soon {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            7px;
+  padding:        .55rem 1.2rem;
+  background:     transparent;
+  border:         1px solid var(--pp-border-soft);
+  border-radius:  8px;
+  color:          var(--pp-text-muted);
+  font-family:    'Oswald', sans-serif;
+  font-size:      .68rem;
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  cursor:         not-allowed;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 14. RESPONSIVIDADE
+ * ══════════════════════════════════════════════════════════════════════ */
+/* Tablet — paddings reduzidos */
+@media (max-width: 1024px) {
+  #tab-perfil { padding: 1.25rem 1.5rem 2.5rem; }
+}
+
+@media (max-width: 768px) {
+  #tab-perfil { padding: 1rem 1rem 2.5rem; }
+  .pp-header { flex-direction: column; align-items: flex-start; }
+  .pp-identity { flex-direction: column; align-items: flex-start; text-align: left; }
+  .pp-avatar-big { width: 80px; height: 80px; font-size: 2rem; }
+  .pp-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .55rem;
+  }
+  .pp-row-control { width: 100%; }
+  .pp-segment { width: 100%; }
+  .pp-segment-btn { flex: 1; justify-content: center; }
+  .pp-select { width: 100%; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 15. FOCUS VISIBLE — acessibilidade
+ * ══════════════════════════════════════════════════════════════════════ */
+.pp-tab:focus-visible,
+.pp-btn:focus-visible,
+.pp-segment-btn:focus-visible,
+.pp-switch:focus-visible {
+  outline: 2px solid var(--pp-gold);
+  outline-offset: 2px;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+ * FASE 2.2.1 — Settings Center Expansion
+ * ════════════════════════════════════════════════════════════════════ */
+
+/* ── Sub-tabs (Dados & Backup) ───────────────────────────────────── */
+.pp-subtabs {
+  display:       flex;
+  gap:           .2rem;
+  margin-bottom: 0;
+  flex-wrap:     wrap;
+  padding-bottom:.75rem;
+  border-bottom: 1px solid var(--pp-border-soft);
+}
+.pp-subtab {
+  display:        flex;
+  align-items:    center;
+  gap:            6px;
+  padding:        .4rem .85rem;
+  border-radius:  99px;
+  border:         1px solid var(--pp-border-soft);
+  background:     transparent;
+  color:          var(--pp-text-muted);
+  cursor:         pointer;
+  font-family:    'Oswald', sans-serif;
+  font-size:      .63rem;
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  transition:     background .15s, border-color .15s, color .15s;
+}
+.pp-subtab svg { width: 13px; height: 13px; }
+.pp-subtab:hover { color: var(--pp-text-2); border-color: var(--pp-border); }
+.pp-subtab.active {
+  background:   var(--pp-gold-subtle);
+  border-color: var(--pp-gold-border);
+  color:        var(--pp-gold);
+}
+
+/* Área de conteúdo do backup — herda estilos do core.css via variáveis */
+#pp-bk-content {
+  min-height: 120px;
+}
+/* Painéis do backup dentro da área pp — ajuste de espaços */
+#pp-bk-content .sim-btn {
+  font-family: 'Oswald', sans-serif !important;
+}
+
+
+/* ── Badges ──────────────────────────────────────────────────────── */
+.pp-badge {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            5px;
+  padding:        .22rem .6rem;
+  border-radius:  99px;
+  font-family:    'Oswald', sans-serif;
+  font-size:      .58rem;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  white-space:    nowrap;
+}
+.pp-badge-green {
+  background: rgba(74,222,128,.1);
+  border:     1px solid rgba(74,222,128,.28);
+  color:      var(--pp-green);
+}
+.pp-badge-dim {
+  background: rgba(255,255,255,.05);
+  border:     1px solid var(--pp-border-soft);
+  color:      var(--pp-text-muted);
+}
+
+body.light .pp-badge-dim {
+  background: rgba(0,0,0,.04);
+  border-color: rgba(0,0,0,.1);
+}
+
+
+/* ── Integrações ─────────────────────────────────────────────────── */
+.pp-integration-item {
+  display:     flex;
+  align-items: center;
+  gap:         1rem;
+  padding:     .9rem 0;
+  border-bottom: 1px solid var(--pp-border-soft);
+}
+.pp-integration-item:last-child { border-bottom: none; padding-bottom: .1rem; }
+.pp-integration-item:first-child { padding-top: .1rem; }
+
+.pp-integration-icon {
+  width:           42px;
+  height:          42px;
+  border-radius:   10px;
+  background:      var(--pp-gold-subtle);
+  border:          1px solid var(--pp-border-soft);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  color:           var(--pp-gold);
+}
+.pp-integration-icon svg { width: 20px; height: 20px; }
+
+.pp-int-google { background: rgba(66,133,244,.08); border-color: rgba(66,133,244,.2); color: #4285F4; }
+.pp-int-fire   { background: rgba(255,128,0,.08);  border-color: rgba(255,128,0,.2);  color: #ff8000; }
+.pp-int-bell   { background: rgba(96,165,250,.08); border-color: rgba(96,165,250,.2); color: #60a5fa; }
+.pp-int-discord{ background: rgba(88,101,242,.08); border-color: rgba(88,101,242,.2); color: #5865f2; }
+.pp-int-api    { background: var(--pp-gold-subtle); border-color: var(--pp-gold-border); color: var(--pp-gold); }
+
+.pp-integration-info  { flex: 1; min-width: 0; }
+.pp-integration-name  { font-family: 'Barlow', sans-serif; font-size: .9rem; font-weight: 600;
+                         color: var(--pp-text); line-height: 1.3; }
+.pp-integration-desc  { font-family: 'Barlow', sans-serif; font-size: .72rem; color: var(--pp-text-muted);
+                         margin-top: .15rem; }
+.pp-integration-status{ flex-shrink: 0; }
+
+
+/* ── Avançado — future grid ──────────────────────────────────────── */
+.pp-future-grid {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.pp-future-item {
+  display:       flex;
+  align-items:   center;
+  gap:           .9rem;
+  padding:       .75rem .9rem;
+  border-radius: 9px;
+  background:    var(--pp-surface-deep);
+  border:        1px solid var(--pp-border-soft);
+  transition:    border-color .16s;
+}
+.pp-future-item.active {
+  border-color: var(--pp-gold-border);
+  background:   var(--pp-gold-subtle);
+}
+.pp-future-icon {
+  width:           36px; height: 36px;
+  border-radius:   8px;
+  background:      var(--pp-surface-raise);
+  display:         flex; align-items: center; justify-content: center;
+  flex-shrink:     0; color: var(--pp-text-muted);
+}
+.pp-future-item.active .pp-future-icon { color: var(--pp-gold); }
+.pp-future-icon svg { width: 16px; height: 16px; }
+.pp-future-info { flex: 1; min-width: 0; }
+.pp-future-title { font-family: 'Barlow', sans-serif; font-size: .88rem; font-weight: 600;
+                   color: var(--pp-text); line-height: 1.3; }
+.pp-future-desc  { font-family: 'Barlow', sans-serif; font-size: .72rem; color: var(--pp-text-muted);
+                   margin-top: .1rem; }
+
+
+/* ── Card variants ───────────────────────────────────────────────── */
+.pp-card-danger {
+  border-color: rgba(248,113,113,.2) !important;
+}
+.pp-card-danger .pp-card-title { color: var(--pp-red); }
+.pp-card-danger:hover { border-color: rgba(248,113,113,.38) !important; }
+
+.pp-card-future {
+  border-color: var(--pp-gold-border) !important;
+  background:   var(--pp-gold-subtle) !important;
+}
+.pp-card-future .pp-card-title {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  color:       var(--pp-gold);
+}
+.pp-card-future .pp-card-title svg { width: 16px; height: 16px; }
+
+
+/* ── Responsividade extra ────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .pp-subtabs { gap: .2rem; }
+  .pp-subtab  { padding: .35rem .6rem; font-size: .58rem; }
+  .pp-integration-item { gap: .65rem; }
+  .pp-integration-icon { width: 36px; height: 36px; }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+ * HOTFIX 1 — Backup rendering próprio
+ * ════════════════════════════════════════════════════════════════════ */
+
+/* Caixa info (O que é exportado) */
+.pp-bk-info-box {
+  background:    rgba(74,222,128,.05);
+  border:        1.5px solid rgba(74,222,128,.2);
+  border-radius: 10px;
+  padding:       .8rem 1rem;
+  margin-bottom: .85rem;
+}
+.pp-bk-info-title {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .68rem;
+  font-weight:    700;
+  color:          var(--pp-green);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom:  .35rem;
+}
+.pp-bk-info-body {
+  font-size:   .74rem;
+  color:       var(--pp-text-2);
+  line-height: 1.7;
+}
+.pp-bk-info-body strong { color: var(--pp-gold); }
+
+/* Resumo de dados */
+.pp-bk-resumo {
+  background:    var(--pp-surface-deep);
+  border:        1px solid var(--pp-border-soft);
+  border-radius: 9px;
+  padding:       .75rem .9rem;
+  margin-bottom: .9rem;
+  font-size:     .72rem;
+  line-height:   1.9;
+  color:         var(--pp-text-2);
+}
+
+/* Item do histórico */
+.pp-bk-hist-item {
+  background:    var(--pp-surface-deep);
+  border:        1px solid var(--pp-border-soft);
+  border-radius: 10px;
+  padding:       .65rem .85rem;
+  margin-bottom: .5rem;
+  transition:    border-color .16s;
+}
+.pp-bk-hist-item:hover { border-color: var(--pp-border); }
+.pp-bk-hist-item:last-child { margin-bottom: 0; }
+
+body.light .pp-bk-info-box  { background: rgba(22,163,74,.05); }
+body.light .pp-bk-resumo    { background: #fafafa; border-color: rgba(0,0,0,.08); }
+body.light .pp-bk-hist-item { background: #fafafa; border-color: rgba(0,0,0,.08); }

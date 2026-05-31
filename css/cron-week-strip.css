@@ -1,0 +1,439 @@
+/* ════════════════════════════════════════════════════════════════════
+ * cron-week-strip.css
+ * ────────────────────────────────────────────────────────────────────
+ * Faixa semanal premium da aba CRONOGRAMA.
+ * Estilo PLANNER: card com header colorido + corpo com data grande.
+ *
+ * Estrutura visual:
+ *   • Barra de navegação superior (.cron-week-nav)
+ *     ├── Botão circular ‹
+ *     ├── Label central
+ *     └── Botão circular ›
+ *
+ *   • 7 cards (.cron-week-strip > .cron-day-cell)
+ *     ├── Header colorido (.cron-day-header)
+ *     │   └── Nome do dia (Segunda, Terça, Domingo...)
+ *     │       Cor: dourado=ativo / verde=done / cinza=normal
+ *     └── Corpo do card (.cron-day-body)
+ *         ├── Número grande (17)
+ *         └── Mês uppercase (MAI)
+ *
+ * Modifica APENAS o visual. Zero alteração de lógica.
+ * ════════════════════════════════════════════════════════════════════ */
+
+/* ─── Barra de navegação superior ───────────────────────────────────── */
+.cron-week-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.85rem;
+  padding:.4rem .35rem;
+}
+
+.cron-week-nav .cron-week-btn{
+  width:28px;
+  height:28px;
+  border-radius:6px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.10);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:rgba(255,255,255,.45);
+  cursor:pointer;
+  user-select:none;
+  flex-shrink:0;
+  padding:0;
+  transition:color .15s ease, border-color .15s ease, background .15s ease;
+}
+.cron-week-nav .cron-week-btn:hover{
+  color:var(--gold, #ffc83c);
+  border-color:rgba(245,200,0,.30);
+  background:rgba(245,200,0,.06);
+}
+.cron-week-nav .cron-week-btn:active{
+  transform: scale(.93);
+  background:rgba(245,200,0,.08);
+}
+.cron-week-nav .cron-week-label{
+  flex:1 1 auto;
+  text-align:center;
+  font-family:'Oswald', sans-serif;
+  font-size:.78rem;
+  font-weight:600;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.85);
+}
+
+/* ─── Container da faixa ────────────────────────────────────────────── */
+#cron-week-strip{
+  display:flex;
+  gap:.55rem;
+  padding:.3rem .2rem;
+  align-items:stretch;
+  justify-content:space-between;
+  flex-wrap:nowrap;
+}
+
+@media (max-width: 720px){
+  #cron-week-strip{
+    gap:.35rem;
+    padding:.3rem;
+    overflow-x:auto;
+    scrollbar-width:thin;
+  }
+  #cron-week-strip::-webkit-scrollbar{height:4px;}
+  #cron-week-strip::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.15);
+    border-radius:2px;
+  }
+  #cron-week-strip .cron-day-cell{
+    flex:0 0 130px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * CARD EXTERNO (estilo planner)
+ * Cantos arredondados, fundo escuro, borda discreta neutra
+ * ════════════════════════════════════════════════════════════════════ */
+#cron-week-strip .cron-day-cell{
+  position:relative;
+  flex:1 1 0;
+  min-width:0;
+  /* Cantos arredondados moderados (estilo planner) */
+  border-radius:14px;
+  /* Borda neutra discreta para cards normais */
+  border:1.5px solid rgba(255,255,255,.10);
+  background:rgba(28,28,38,.65);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.025);
+  /* Layout interno: header em cima, corpo embaixo */
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  /* IMPORTANTE: overflow hidden para os cantos do header respeitarem o border-radius do card */
+  overflow:hidden;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .18s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+#cron-week-strip .cron-day-cell:hover{
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.18);
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.40),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* ─── HEADER colorido do card ───────────────────────────────────────── */
+#cron-week-strip .cron-day-cell .cron-day-header{
+  /* Fundo cinza neutro para dias normais */
+  background:linear-gradient(180deg, rgba(55,55,68,.85) 0%, rgba(40,40,52,.85) 100%);
+  padding:.6rem .4rem;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  /* Margem negativa SÓ nas laterais (não no topo).
+     Estende o header até as bordas laterais do card, eliminando o vão
+     entre header e borda externa. O overflow:hidden do card pai
+     garante que nada vaze para fora dos cantos arredondados. */
+  margin-left:-1.5px;
+  margin-right:-1.5px;
+  transition:background .25s ease, border-color .25s ease;
+}
+
+#cron-week-strip .cron-day-cell .cron-day-header .cron-day-full{
+  font-family:'Oswald', sans-serif;
+  font-size:1.05rem;
+  line-height:1.1;
+  font-weight:700;
+  letter-spacing:.02em;
+  text-transform:none;
+  color:rgba(255,255,255,.85);
+  transition:color .25s ease;
+  display:block;
+  text-align:center;
+}
+
+/* ─── CORPO do card (número + mês) ──────────────────────────────────── */
+#cron-week-strip .cron-day-cell .cron-day-body{
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:.9rem .4rem 1rem;
+  gap:.15rem;
+  /* Fundo um pouco mais escuro que o card para criar separação sutil */
+  background:rgba(20,20,28,.4);
+}
+
+#cron-week-strip .cron-day-cell .cron-day-body .cron-day-num{
+  font-family:'Bebas Neue', 'Oswald', sans-serif;
+  font-size:2.7rem;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:.02em;
+  color:rgba(255,255,255,.96);
+  transition:color .25s ease, text-shadow .25s ease;
+}
+
+#cron-week-strip .cron-day-cell .cron-day-body .cron-day-mes{
+  font-family:'Oswald', sans-serif;
+  font-size:.92rem;
+  line-height:1;
+  font-weight:600;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+  margin-top:.3rem;
+  transition:color .25s ease;
+}
+
+/* Esconde elementos legados se ainda renderizados */
+#cron-week-strip .cron-day-cell .cron-day-abbr{ display:none; }
+#cron-week-strip .cron-day-cell .cron-day-dot{ display:none; }
+
+/* ════════════════════════════════════════════════════════════════════
+ * ESTADO: ACTIVE (dia atual / selecionado)
+ * Borda dourada + header dourado
+ * ════════════════════════════════════════════════════════════════════ */
+#cron-week-strip .cron-day-cell.active{
+  border-color:var(--gold, #ffc83c);
+  box-shadow:
+    0 0 0 1px rgba(255,200,60,.20),
+    0 4px 14px rgba(255,180,40,.22),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+#cron-week-strip .cron-day-cell.active:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(255,200,60,.28),
+    0 6px 18px rgba(255,180,40,.30),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* Header dourado escuro com texto dourado claro */
+#cron-week-strip .cron-day-cell.active .cron-day-header{
+  background:linear-gradient(180deg, rgba(78,55,15,.95) 0%, rgba(60,42,12,.95) 100%);
+  border-bottom:1px solid rgba(255,200,60,.30);
+}
+#cron-week-strip .cron-day-cell.active .cron-day-header .cron-day-full{
+  color:var(--gold, #ffc83c);
+  font-weight:700;
+}
+
+#cron-week-strip .cron-day-cell.active .cron-day-body .cron-day-num{
+  color:#ffffff;
+}
+#cron-week-strip .cron-day-cell.active .cron-day-body .cron-day-mes{
+  color:rgba(255,200,60,.85);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * ESTADO: DONE (todas obrigatórias concluídas)
+ * Header verde + indicações sutis verdes
+ * ════════════════════════════════════════════════════════════════════ */
+#cron-week-strip .cron-day-cell.done{
+  border-color:rgba(74,222,128,.35);
+  box-shadow:
+    0 2px 10px rgba(74,222,128,.10),
+    inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+#cron-week-strip .cron-day-cell.done .cron-day-header{
+  background:linear-gradient(180deg, rgba(20,60,32,.92) 0%, rgba(14,42,22,.92) 100%);
+  border-bottom:1px solid rgba(74,222,128,.25);
+}
+#cron-week-strip .cron-day-cell.done .cron-day-header .cron-day-full{
+  color:rgba(150,240,180,.95);
+  font-weight:700;
+}
+
+#cron-week-strip .cron-day-cell.done .cron-day-body .cron-day-num{
+  color:rgba(220,255,230,.96);
+}
+#cron-week-strip .cron-day-cell.done .cron-day-body .cron-day-mes{
+  color:rgba(140,240,170,.70);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * COMBINAÇÃO: ACTIVE + DONE
+ * Borda dourada (prioridade), header verde mantido
+ * ════════════════════════════════════════════════════════════════════ */
+#cron-week-strip .cron-day-cell.active.done{
+  border-color:var(--gold, #ffc83c);
+  box-shadow:
+    0 0 0 1px rgba(255,200,60,.18),
+    0 4px 14px rgba(255,180,40,.18),
+    0 4px 10px rgba(74,222,128,.10),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+#cron-week-strip .cron-day-cell.active.done .cron-day-header{
+  background:linear-gradient(180deg, rgba(50,55,20,.95) 0%, rgba(35,42,15,.95) 100%);
+  border-bottom:1px solid rgba(255,200,60,.30);
+}
+#cron-week-strip .cron-day-cell.active.done .cron-day-header .cron-day-full{
+  color:var(--gold, #ffc83c);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * TEMA CLARO
+ * ════════════════════════════════════════════════════════════════════ */
+body.light .cron-week-nav .cron-week-btn{
+  border-color:rgba(0,0,0,.12);
+  color:rgba(40,40,50,.5);
+  background:transparent;
+}
+body.light .cron-week-nav .cron-week-btn:hover{
+  color:#9a6e00;
+  border-color:rgba(160,110,0,.35);
+  background:rgba(200,150,0,.07);
+}
+body.light .cron-week-nav .cron-week-label{ color:rgba(40,40,50,.85); }
+
+body.light #cron-week-strip .cron-day-cell{
+  background:rgba(248,248,250,.95);
+  border-color:rgba(0,0,0,.10);
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+body.light #cron-week-strip .cron-day-cell .cron-day-header{
+  background:linear-gradient(180deg, rgba(230,230,236,.95) 0%, rgba(220,220,228,.95) 100%);
+  border-bottom-color:rgba(0,0,0,.08);
+}
+body.light #cron-week-strip .cron-day-cell .cron-day-header .cron-day-full{
+  color:rgba(40,40,50,.85);
+}
+body.light #cron-week-strip .cron-day-cell .cron-day-body{
+  background:rgba(255,255,255,.5);
+}
+body.light #cron-week-strip .cron-day-cell .cron-day-body .cron-day-num{
+  color:rgba(40,40,50,.95);
+}
+body.light #cron-week-strip .cron-day-cell .cron-day-body .cron-day-mes{
+  color:rgba(80,80,100,.7);
+}
+
+body.light #cron-week-strip .cron-day-cell.active{
+  border-color:var(--gold, #ffc83c);
+}
+body.light #cron-week-strip .cron-day-cell.active .cron-day-header{
+  background:linear-gradient(180deg, rgba(255,235,180,.98) 0%, rgba(245,210,140,.98) 100%);
+}
+body.light #cron-week-strip .cron-day-cell.active .cron-day-header .cron-day-full{ color:#7a5a10; }
+body.light #cron-week-strip .cron-day-cell.active .cron-day-body .cron-day-mes{ color:rgba(160,120,24,.85); }
+
+body.light #cron-week-strip .cron-day-cell.done{
+  border-color:rgba(34,150,80,.45);
+}
+body.light #cron-week-strip .cron-day-cell.done .cron-day-header{
+  background:linear-gradient(180deg, rgba(200,240,210,.95) 0%, rgba(180,225,195,.95) 100%);
+}
+body.light #cron-week-strip .cron-day-cell.done .cron-day-header .cron-day-full{ color:#0f6b2e; }
+body.light #cron-week-strip .cron-day-cell.done .cron-day-body .cron-day-num{ color:#0a4a20; }
+body.light #cron-week-strip .cron-day-cell.done .cron-day-body .cron-day-mes{ color:rgba(15,107,46,.7); }
+
+
+/* ════════════════════════════════════════════════════════════════
+ * CRONOGRAMA POLISH V1 — Week Strip refinements
+ * Purely additive — overrides specific properties only
+ * ════════════════════════════════════════════════════════════════ */
+
+/* Cell: smoother hover/active transitions */
+.cron-day-cell {
+  transition: background .18s ease, border-color .18s ease, transform .14s ease;
+}
+.cron-day-cell:hover:not(.active) {
+  transform: translateY(-1px);
+}
+
+/* Active cell: stronger identity without extra color */
+.cron-day-cell.active {
+  background: rgba(245,200,0,.08);
+  border-color: rgba(245,200,0,.35) !important;
+}
+
+/* Done cell: subtle green tint */
+.cron-day-cell.done {
+  background: rgba(74,222,128,.06);
+  border-color: rgba(74,222,128,.2) !important;
+}
+.cron-day-cell.done.active {
+  background: rgba(74,222,128,.10);
+  border-color: rgba(74,222,128,.35) !important;
+}
+
+/* Day number: bigger, bolder for quick scanning */
+.cron-day-num {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Month label: smaller, more receded */
+.cron-day-mes {
+  font-size: .5rem;
+  letter-spacing: .08em;
+  opacity: .55;
+  text-transform: uppercase;
+}
+
+/* Full day name (Mon/Tue): uppercase, lighter */
+.cron-day-full {
+  font-size: .5rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  opacity: .6;
+}
+
+/* Dot: refined sizes and transitions */
+.cron-day-dot {
+  transition: background .18s ease, box-shadow .18s ease;
+}
+
+/* Done dot: green, small glow */
+.cron-day-cell.done .cron-day-dot {
+  box-shadow: 0 0 0 2px rgba(74,222,128,.18);
+}
+
+/* Active dot: gold */
+.cron-day-cell.active .cron-day-dot {
+  box-shadow: 0 0 0 2px rgba(245,200,0,.22);
+}
+
+/* Week nav: tighten up */
+.cron-week-nav {
+  margin-bottom: .55rem;
+}
+.cron-week-label {
+  font-size: .67rem;
+  letter-spacing: .05em;
+}
+
+/* ── Dot: micro progress ring via CSS custom property ─────────
+   The JS sets data-pct="N" on the dot element.
+   We use attribute selectors for discrete states (cleaner than 100 calc steps).
+   Done checkmark SVG is injected by JS inside the dot span.
+*/
+.cron-day-dot {
+  position:       relative;
+  overflow:       visible;
+}
+
+/* Dot with SVG check inside (allDone state) */
+.cron-day-cell.done .cron-day-dot {
+  display:        inline-flex;
+  align-items:    center;
+  justify-content: center;
+  color:          var(--green);
+}
+
+/* Discrete progress: partial done states — inner glow */
+.cron-day-dot[data-pct="0"]  { opacity: .35; }
+.cron-day-dot[data-pct]:not([data-pct="0"]):not([data-pct="100"]) {
+  box-shadow: 0 0 0 1.5px rgba(245,200,0,.30);
+}

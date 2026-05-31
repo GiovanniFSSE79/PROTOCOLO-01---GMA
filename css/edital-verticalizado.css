@@ -1,0 +1,844 @@
+/* ════════════════════════════════════════════════════════════════════
+ * edital-verticalizado.css — PROTOCOLO 01 · Fase 2.3
+ * ────────────────────────────────────────────────────────────────────
+ * Rework visual profundo da aba Edital Verticalizado.
+ * Identidade: azul petróleo + dourado queimado — SaaS premium.
+ *
+ * ARQUITETURA:
+ *   Carrega após profile-panel.css e antes de cron-week-strip.css.
+ *   Todos os estilos isolados sob #tab-progresso — zero colisão.
+ *
+ * GARANTIAS CRÍTICAS:
+ *   ✅ IDs funcionais intocados: edital-list, prog-bar, prog-frac,
+ *      prog-completos, prog-pendentes, prog-painel-*, prog-sub-*,
+ *      cfg-edital-wrap, disc-group-*, dgb-*
+ *   ✅ Classes de render dinâmico preservadas: .disc-group,
+ *      .disc-group-header, .disc-group-body, .disc-group-prog*,
+ *      .disc-group-name, .disc-group-pct, .disc-group-chev,
+ *      .topic-item, .topic-main, .topic-text, .topic-checks,
+ *      .tcheck, .subtopic-list, .subtopic-item, .subtopic-text,
+ *      .stcheck
+ *   ✅ Integração com Estatísticas de Questões preservada
+ *   ✅ Dark mode + Light mode
+ *   ✅ Offline / file:///
+ *
+ * FASE: 2.3 · Release 1
+ * ════════════════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * TOKENS LOCAIS — edital-verticalizado
+ * ══════════════════════════════════════════════════════════════════════ */
+:root {
+  --ev-gold:        #C6A15B;
+  --ev-gold-dim:    rgba(198,161,91,.65);
+  --ev-gold-ghost:  rgba(198,161,91,.1);
+  --ev-gold-border: rgba(198,161,91,.28);
+  --ev-green:       #4ade80;
+  --ev-red:         #f87171;
+  --ev-blue:        #60a5fa;
+  --ev-surface:     #111c2b;
+  --ev-surface-2:   #0d1623;
+  --ev-surface-3:   #15243a;
+  --ev-border:      rgba(255,255,255,.07);
+  --ev-border-gold: rgba(198,161,91,.2);
+  --ev-text:        rgba(255,255,255,.9);
+  --ev-text-2:      rgba(255,255,255,.62);
+  --ev-text-muted:  rgba(255,255,255,.38);
+  --ev-ease:        cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light {
+  --ev-surface:     #ffffff;
+  --ev-surface-2:   #f4f4f4;
+  --ev-surface-3:   #fafafa;
+  --ev-border:      rgba(0,0,0,.07);
+  --ev-border-gold: rgba(138,100,0,.22);
+  --ev-text:        #0f1225;
+  --ev-text-2:      rgba(15,18,37,.7);
+  --ev-text-muted:  rgba(15,18,37,.42);
+  --ev-gold:        #8a6400;
+  --ev-gold-dim:    rgba(138,100,0,.7);
+  --ev-gold-ghost:  rgba(138,100,0,.07);
+  --ev-gold-border: rgba(138,100,0,.25);
+  --ev-green:       #16a34a;
+  --ev-red:         #dc2626;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 1. CONTAINER DA ABA
+ * ══════════════════════════════════════════════════════════════════════ */
+#tab-progresso {
+  padding:    1.25rem clamp(1rem, 3.5vw, 2.5rem) 3rem;
+  width:      100%;
+  box-sizing: border-box;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 2. HEADER PREMIUM
+ * ══════════════════════════════════════════════════════════════════════ */
+.ev-header {
+  background:    linear-gradient(135deg,
+                   rgba(11,34,57,.95) 0%,
+                   rgba(8,32,50,.88) 100%);
+  border:        1px solid var(--ev-border-gold);
+  border-radius: 14px;
+  padding:       1.4rem 1.6rem 1.2rem;
+  margin-bottom: 1.2rem;
+  position:      relative;
+  overflow:      hidden;
+  /* Detalhe decorativo */
+  box-shadow:    0 4px 28px rgba(0,0,0,.35),
+                 inset 0 1px 0 rgba(198,161,91,.08);
+}
+/* Detalhe de brilho no canto */
+.ev-header::before {
+  content:    '';
+  position:   absolute;
+  top:        0;
+  right:      0;
+  width:      260px;
+  height:     100%;
+  background: radial-gradient(
+    ellipse at 100% 50%,
+    rgba(198,161,91,.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.ev-header-main {
+  display:         flex;
+  align-items:     flex-start;
+  justify-content: space-between;
+  gap:             1.5rem;
+  margin-bottom:   1.1rem;
+  flex-wrap:       wrap;
+}
+
+.ev-eyebrow {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .55rem;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color:          var(--ev-gold-dim);
+  margin-bottom:  .3rem;
+}
+
+.ev-title {
+  font-family:    'Oswald', sans-serif;
+  font-size:      1.55rem;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color:          #fff;
+  line-height:    1.1;
+  margin-bottom:  .3rem;
+}
+
+.ev-subtitle {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .78rem;
+  font-weight: 400;
+  color:       var(--ev-text-muted);
+  line-height: 1.5;
+}
+
+/* Stats pills — Estudados / Pendentes / Total */
+.ev-header-stats {
+  display:  flex;
+  gap:      .55rem;
+  flex-wrap:wrap;
+  flex-shrink: 0;
+}
+
+.ev-stat-pill {
+  display:         flex;
+  align-items:     center;
+  gap:             6px;
+  padding:         .38rem .85rem;
+  border-radius:   99px;
+  border:          1px solid;
+  font-family:     'Oswald', sans-serif;
+  font-size:       .7rem;
+  font-weight:     700;
+  white-space:     nowrap;
+  transition:      opacity .15s;
+}
+.ev-stat-pill svg { width: 13px; height: 13px; flex-shrink: 0; }
+.ev-stat-label  { font-weight: 500; font-size: .65rem; opacity: .75; }
+
+.ev-stat-pill.green {
+  background:   rgba(74,222,128,.1);
+  border-color: rgba(74,222,128,.28);
+  color:        var(--ev-green);
+}
+.ev-stat-pill.red {
+  background:   rgba(248,113,113,.1);
+  border-color: rgba(248,113,113,.28);
+  color:        var(--ev-red);
+}
+.ev-stat-pill.gold {
+  background:   var(--ev-gold-ghost);
+  border-color: var(--ev-gold-border);
+  color:        var(--ev-gold);
+}
+
+/* Barra de progresso geral */
+.ev-progress-wrap { }
+.ev-progress-track {
+  height:       8px;
+  background:   rgba(255,255,255,.07);
+  border-radius:99px;
+  overflow:     hidden;
+}
+.ev-progress-fill {
+  height:        100%;
+  border-radius: 99px;
+  background:    linear-gradient(90deg, #C6A15B 0%, #D4AF37 100%);
+  transition:    width 0.6s var(--ev-ease);
+  position:      relative;
+}
+/* Shimmer na barra de progresso */
+.ev-progress-fill::after {
+  content:    '';
+  position:   absolute;
+  top:        0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.2) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Light mode header */
+body.light .ev-header {
+  background: linear-gradient(135deg,
+    rgba(11,34,57,.92) 0%,
+    rgba(8,32,50,.85) 100%) !important;
+}
+body.light .ev-title    { color: #fff !important; }
+body.light .ev-eyebrow  { color: rgba(198,161,91,.65) !important; }
+body.light .ev-subtitle { color: rgba(255,255,255,.5) !important; }
+body.light .ev-stat-pill.green { background: rgba(74,222,128,.12) !important; }
+body.light .ev-stat-pill.red   { background: rgba(248,113,113,.12) !important; }
+body.light .ev-stat-pill.gold  { background: rgba(198,161,91,.1) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 3. TOOLBAR — tabs + legenda
+ * ══════════════════════════════════════════════════════════════════════ */
+.ev-toolbar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             1rem;
+  margin-bottom:   1.1rem;
+  padding-bottom:  .75rem;
+  border-bottom:   1px solid var(--ev-border);
+  flex-wrap:       wrap;
+}
+
+.ev-tabs {
+  display: flex;
+  gap:     .25rem;
+}
+
+.ev-tab {
+  display:        flex;
+  align-items:    center;
+  gap:            7px;
+  padding:        .52rem 1rem;
+  border-radius:  8px;
+  border:         1px solid transparent;
+  background:     transparent;
+  cursor:         pointer;
+  color:          var(--ev-text-muted);
+  font-family:    'Oswald', sans-serif;
+  font-size:      .72rem;
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  transition:     background .15s var(--ev-ease),
+                  color     .15s var(--ev-ease),
+                  border-color .15s var(--ev-ease);
+}
+.ev-tab svg { width: 14px; height: 14px; opacity: .6; transition: opacity .15s; }
+.ev-tab:hover {
+  color:      var(--ev-text-2);
+  background: rgba(255,255,255,.04);
+}
+.ev-tab:hover svg { opacity: .9; }
+.ev-tab.active {
+  background:   var(--ev-gold-ghost);
+  border-color: var(--ev-gold-border);
+  color:        var(--ev-gold);
+}
+.ev-tab.active svg { opacity: 1; }
+
+/* Legenda inline */
+.ev-legend {
+  display:    flex;
+  gap:        .85rem;
+  flex-shrink:0;
+}
+.ev-legend-item {
+  display:     flex;
+  align-items: center;
+  gap:         5px;
+  font-family: 'Barlow', sans-serif;
+  font-size:   .65rem;
+  color:       var(--ev-text-muted);
+}
+.ev-legend-dot {
+  width:        10px;
+  height:       10px;
+  border-radius:50%;
+  flex-shrink:  0;
+}
+.ev-dot-estudado {
+  background: rgba(198,161,91,.4);
+  border:     1px solid rgba(198,161,91,.6);
+}
+.ev-dot-pendente {
+  background: rgba(255,255,255,.06);
+  border:     1px solid rgba(255,255,255,.18);
+}
+
+/* sim-tab-btn compat — mantém funcionalidade do progSubAba
+   mas os elementos visuais usam .ev-tab agora */
+#prog-sub-lista.sim-tab-btn,
+#prog-sub-config.sim-tab-btn {
+  /* Anula os estilos antigos — os .ev-tab prevalecem */
+  display: none !important;
+}
+#prog-sub-lista.ev-tab,
+#prog-sub-config.ev-tab {
+  display: flex !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 4. MÓDULOS DE ESTUDO — .disc-group PREMIUM
+ * ══════════════════════════════════════════════════════════════════════ */
+.disc-group {
+  background:    var(--ev-surface) !important;
+  border:        1px solid var(--ev-border) !important;
+  border-radius: 12px !important;
+  margin-bottom: .75rem !important;
+  overflow:      hidden !important;
+  transition:    border-color .18s var(--ev-ease),
+                 box-shadow   .18s var(--ev-ease) !important;
+}
+.disc-group:hover {
+  border-color: var(--ev-border-gold) !important;
+  box-shadow:   0 4px 16px rgba(0,0,0,.2) !important;
+}
+
+/* Header do módulo — substitui o gradiente amarelado */
+.disc-group-header {
+  padding:         .8rem 1.1rem !important;
+  display:         flex !important;
+  align-items:     center !important;
+  justify-content: space-between !important;
+  cursor:          pointer !important;
+  user-select:     none !important;
+  /* Superfície azul petróleo profunda */
+  background:      linear-gradient(
+                     135deg,
+                     #0B2239 0%,
+                     #082032 100%
+                   ) !important;
+  border-bottom:   1px solid rgba(198,161,91,.12) !important;
+  border-left:     3px solid var(--ev-gold) !important;
+  transition:      background .18s var(--ev-ease) !important;
+}
+.disc-group-header:hover {
+  background: linear-gradient(
+                135deg,
+                #0d2a45 0%,
+                #0a2438 100%
+              ) !important;
+}
+
+/* Nome da disciplina */
+.disc-group-name {
+  font-family:    'Oswald', sans-serif !important;
+  font-size:      .9rem !important;
+  font-weight:    700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .04em !important;
+  color:          #fff !important;
+  flex:           1 !important;
+  min-width:      0 !important;
+}
+
+/* Percentual */
+.disc-group-pct {
+  font-family: 'Oswald', sans-serif !important;
+  font-size:   .85rem !important;
+  font-weight: 700 !important;
+  color:       var(--ev-gold) !important;
+  margin-right:.5rem !important;
+}
+
+/* Chevron */
+.disc-group-chev {
+  width:            14px !important;
+  height:           14px !important;
+  stroke:           rgba(255,255,255,.45) !important;
+  fill:             none !important;
+  stroke-width:     2.5 !important;
+  stroke-linecap:   round !important;
+  stroke-linejoin:  round !important;
+  transition:       transform .25s var(--ev-ease) !important;
+  flex-shrink:      0 !important;
+}
+.disc-group-chev.open { transform: rotate(180deg) !important; }
+
+/* Barra de progresso do módulo */
+.disc-group-prog {
+  height:     3px !important;
+  background: rgba(255,255,255,.06) !important;
+  margin:     0 !important;
+}
+.disc-group-prog-fill {
+  height:        100% !important;
+  background:    linear-gradient(90deg, #C6A15B 0%, #D4AF37 100%) !important;
+  transition:    width 0.5s var(--ev-ease) !important;
+}
+
+/* Corpo do módulo (tópicos) */
+.disc-group-body {
+  display:    none !important;
+  padding:    .65rem .95rem .8rem !important;
+  background: var(--ev-surface) !important;
+}
+.disc-group-body.open { display: block !important; }
+
+/* Light mode módulos */
+body.light .disc-group {
+  background:   var(--ev-surface) !important;
+  border-color: rgba(0,0,0,.08) !important;
+}
+body.light .disc-group-header {
+  background: linear-gradient(
+                135deg,
+                #0B2239 0%,
+                #082032 100%
+              ) !important;
+}
+body.light .disc-group-body {
+  background: #fafafa !important;
+}
+body.light .disc-group-name { color: #fff !important; }
+body.light .disc-group-pct  { color: var(--ev-gold) !important; }
+body.light .disc-group-prog { background: rgba(255,255,255,.08) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 5. TÓPICOS INTERNOS — .topic-item PREMIUM
+ * ══════════════════════════════════════════════════════════════════════ */
+.topic-item {
+  padding:       .5rem 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,.05) !important;
+  transition:    background .15s var(--ev-ease) !important;
+}
+.topic-item:last-child { border-bottom: none !important; }
+.topic-item:hover {
+  background:    rgba(198,161,91,.03) !important;
+  border-radius: 7px !important;
+  padding-left:  .4rem !important;
+  padding-right: .4rem !important;
+  margin:        0 -.4rem !important;
+}
+
+.topic-main {
+  display:     flex !important;
+  align-items: flex-start !important;
+  gap:         10px !important;
+}
+
+.topic-text {
+  flex:        1 !important;
+  font-family: 'Barlow', sans-serif !important;
+  font-size:   .78rem !important;
+  font-weight: 500 !important;
+  color:       var(--ev-text-2) !important;
+  line-height: 1.5 !important;
+}
+
+.topic-checks {
+  display:    flex !important;
+  gap:        6px !important;
+  flex-shrink:0 !important;
+  margin-top: 2px !important;
+}
+
+/* Checkbox premium — estado E (estudado) */
+.tcheck {
+  width:           24px !important;
+  height:          24px !important;
+  border-radius:   7px !important;
+  border:          1.5px solid rgba(255,255,255,.2) !important;
+  background:      rgba(255,255,255,.03) !important;
+  display:         flex !important;
+  align-items:     center !important;
+  justify-content: center !important;
+  cursor:          pointer !important;
+  flex-shrink:     0 !important;
+  transition:
+    background     .15s var(--ev-ease),
+    border-color   .15s var(--ev-ease),
+    box-shadow     .15s var(--ev-ease) !important;
+  position:        relative !important;
+}
+.tcheck:hover {
+  border-color: var(--ev-gold) !important;
+  background:   rgba(198,161,91,.06) !important;
+}
+.tcheck.estudado {
+  background:   rgba(198,161,91,.18) !important;
+  border-color: var(--ev-gold) !important;
+  box-shadow:   0 0 8px rgba(198,161,91,.25) !important;
+}
+.tcheck.estudado svg {
+  display:     block !important;
+  stroke:      var(--ev-gold) !important;
+}
+.tcheck svg {
+  display:          none !important;
+  width:            12px !important;
+  height:           12px !important;
+  fill:             none !important;
+  stroke-width:     2.5 !important;
+  stroke-linecap:   round !important;
+  stroke-linejoin:  round !important;
+}
+
+.tcheck-label {
+  font-family:    'Oswald', sans-serif !important;
+  font-size:      .5rem !important;
+  color:          rgba(255,255,255,.3) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .06em !important;
+  text-align:     center !important;
+  line-height:    1 !important;
+  margin-top:     2px !important;
+}
+
+/* Light mode tópicos */
+body.light .topic-text { color: rgba(15,18,37,.75) !important; }
+body.light .topic-item { border-bottom-color: rgba(0,0,0,.06) !important; }
+body.light .tcheck {
+  border-color: rgba(0,0,0,.18) !important;
+  background:   #fff !important;
+}
+body.light .tcheck:hover { border-color: var(--ev-gold) !important; }
+body.light .tcheck.estudado {
+  background:   rgba(138,100,0,.1) !important;
+  border-color: var(--ev-gold) !important;
+  box-shadow:   0 0 8px rgba(138,100,0,.2) !important;
+}
+body.light .tcheck.estudado svg { stroke: var(--ev-gold) !important; }
+body.light .tcheck-label { color: rgba(0,0,0,.3) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 6. SUBTÓPICOS — .subtopic-item PREMIUM
+ * ══════════════════════════════════════════════════════════════════════ */
+.subtopic-list {
+  padding-left: 1.5rem !important;
+  margin-top:   .35rem !important;
+}
+
+.subtopic-item {
+  display:     flex !important;
+  align-items: flex-start !important;
+  gap:         8px !important;
+  padding:     .3rem 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,.03) !important;
+  transition:  background .15s var(--ev-ease) !important;
+}
+.subtopic-item:last-child { border-bottom: none !important; }
+.subtopic-item:hover {
+  background:    rgba(198,161,91,.02) !important;
+  border-radius: 5px !important;
+}
+
+.subtopic-text {
+  flex:        1 !important;
+  font-family: 'Barlow', sans-serif !important;
+  font-size:   .72rem !important;
+  color:       var(--ev-text-muted) !important;
+  line-height: 1.4 !important;
+}
+
+.subtopic-checks {
+  display:    flex !important;
+  gap:        5px !important;
+  flex-shrink:0 !important;
+}
+
+/* Checkbox do subtópico */
+.stcheck {
+  width:           20px !important;
+  height:          20px !important;
+  border-radius:   5px !important;
+  border:          1px solid rgba(255,255,255,.14) !important;
+  background:      rgba(255,255,255,.02) !important;
+  display:         flex !important;
+  align-items:     center !important;
+  justify-content: center !important;
+  cursor:          pointer !important;
+  flex-shrink:     0 !important;
+  transition:
+    background   .15s var(--ev-ease),
+    border-color .15s var(--ev-ease) !important;
+}
+.stcheck:hover { border-color: rgba(198,161,91,.5) !important; }
+.stcheck.estudado {
+  background:   rgba(198,161,91,.15) !important;
+  border-color: rgba(198,161,91,.45) !important;
+}
+.stcheck.estudado svg {
+  display: block !important;
+  stroke:  var(--ev-gold) !important;
+}
+.stcheck svg {
+  display:          none !important;
+  width:            10px !important;
+  height:           10px !important;
+  fill:             none !important;
+  stroke-width:     2.5 !important;
+  stroke-linecap:   round !important;
+  stroke-linejoin:  round !important;
+}
+
+/* Light mode subtópicos */
+body.light .subtopic-text { color: rgba(15,18,37,.5) !important; }
+body.light .stcheck {
+  border-color: rgba(0,0,0,.14) !important;
+  background:   #fff !important;
+}
+body.light .stcheck.estudado {
+  background:   rgba(138,100,0,.08) !important;
+  border-color: rgba(138,100,0,.35) !important;
+}
+body.light .stcheck.estudado svg { stroke: var(--ev-gold) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 7. PAINEL CONFIGURAR — visual premium
+ * ══════════════════════════════════════════════════════════════════════ */
+.ev-config-card {
+  background:    var(--ev-surface);
+  border:        1px solid var(--ev-border);
+  border-radius: 12px;
+  padding:       1.2rem 1.4rem;
+  margin-bottom: 1rem;
+}
+.ev-config-title {
+  font-family:    'Oswald', sans-serif;
+  font-size:      .88rem;
+  font-weight:    700;
+  color:          var(--ev-gold);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom:  .5rem;
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+}
+.ev-config-title svg { width: 16px; height: 16px; opacity: .7; }
+.ev-config-desc {
+  font-family: 'Barlow', sans-serif;
+  font-size:   .75rem;
+  color:       var(--ev-text-muted);
+  line-height: 1.6;
+  margin-bottom: .95rem;
+}
+.ev-config-desc strong { color: var(--ev-gold); }
+
+.ev-config-actions {
+  display:    flex;
+  gap:        .5rem;
+  margin-top: .9rem;
+  flex-wrap:  wrap;
+}
+.ev-config-btn {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             7px;
+  padding:         .55rem 1rem;
+  border-radius:   8px;
+  border:          1px solid transparent;
+  cursor:          pointer;
+  font-family:     'Oswald', sans-serif;
+  font-size:       .7rem;
+  font-weight:     600;
+  text-transform:  uppercase;
+  letter-spacing:  .07em;
+  transition:      background .16s var(--ev-ease),
+                   border-color .16s var(--ev-ease),
+                   opacity .12s var(--ev-ease);
+  white-space:     nowrap;
+}
+.ev-config-btn-add {
+  background:   rgba(255,255,255,.04);
+  border-color: rgba(255,255,255,.1);
+  color:        var(--ev-text-muted);
+}
+.ev-config-btn-add:hover {
+  border-color: var(--ev-gold-border);
+  color:        var(--ev-gold);
+  background:   var(--ev-gold-ghost);
+}
+.ev-config-btn-save {
+  background:    var(--ev-gold);
+  color:         #0a1929;
+  border-color:  var(--ev-gold);
+}
+.ev-config-btn-save:hover { opacity: .88; }
+
+/* Light mode config */
+body.light .ev-config-card {
+  background:   #fff !important;
+  border-color: rgba(0,0,0,.08) !important;
+}
+body.light .ev-config-title { color: var(--ev-gold) !important; }
+body.light .ev-config-desc  { color: rgba(15,18,37,.5) !important; }
+body.light .ev-config-btn-add {
+  background:   rgba(0,0,0,.03) !important;
+  border-color: rgba(0,0,0,.1) !important;
+  color:        rgba(15,18,37,.5) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 8. RESET BUTTON — refinado
+ * ══════════════════════════════════════════════════════════════════════ */
+#tab-progresso .reset-wrap {
+  display:         flex !important;
+  justify-content: center !important;
+  margin-top:      1.5rem !important;
+}
+#tab-progresso .reset-btn.danger {
+  background:     transparent !important;
+  border:         1px solid rgba(248,113,113,.2) !important;
+  color:          rgba(248,113,113,.5) !important;
+  font-family:    'Oswald', sans-serif !important;
+  font-size:      .62rem !important;
+  font-weight:    600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .1em !important;
+  padding:        .38rem 1.1rem !important;
+  border-radius:  99px !important;
+  cursor:         pointer !important;
+  transition:     border-color .18s, color .18s !important;
+}
+#tab-progresso .reset-btn.danger:hover {
+  border-color: rgba(248,113,113,.55) !important;
+  color:        #f87171 !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 9. NEUTRALIZAÇÃO DE RESIDUAIS — sobreposições do core.css
+ * ══════════════════════════════════════════════════════════════════════ */
+
+/* Remove o antigo sec-title da aba Edital (não existe mais no HTML) */
+#tab-progresso .sec-title { display: none !important; }
+
+/* Remove a legenda antiga (legend-row) se algum remanescente aparecer */
+#tab-progresso .legend-row { display: none !important; }
+
+/* Remove o prog-wrap antigo */
+#tab-progresso .prog-wrap { display: none !important; }
+
+/* Remove os stat-cards antigos (stat-grid two) */
+#tab-progresso .stat-grid.two { display: none !important; }
+
+/* O prog-bar agora é controlado via .ev-progress-fill — garantir que
+   a classe prog-fill green do core.css não conflite */
+#tab-progresso .ev-progress-fill.prog-fill.green {
+  background: linear-gradient(90deg, #C6A15B 0%, #D4AF37 100%) !important;
+}
+
+/* Sobrescreve o gradiente do tokens.css */
+#tab-progresso .prog-fill.yellow {
+  background: linear-gradient(90deg, #C6A15B 0%, #D4AF37 100%) !important;
+}
+
+/* sim-tab-btn: usamos .ev-tab, então ocultamos o estilo antigo */
+#tab-progresso .sim-tab-btn {
+  display: none !important;
+}
+
+/* Garantir que o seletor do light mode no disc-group não conflite */
+body.light #tab-progresso .disc-group {
+  background: #fff !important;
+  border-color: rgba(0,0,0,.08) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 10. RESPONSIVIDADE
+ * ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  #tab-progresso          { padding: 1rem 1rem 2.5rem; }
+  .ev-header              { padding: 1rem 1.1rem .9rem; }
+  .ev-header-main         { flex-direction: column; gap: .85rem; }
+  .ev-title               { font-size: 1.25rem; }
+  .ev-header-stats        { width: 100%; justify-content: flex-start; }
+  .ev-toolbar             { flex-direction: column; align-items: flex-start; gap: .65rem; }
+  .ev-legend              { display: none; }
+  .disc-group-header      { padding: .65rem .85rem !important; }
+  .disc-group-name        { font-size: .82rem !important; }
+}
+
+@media (max-width: 480px) {
+  .ev-stat-pill           { padding: .3rem .65rem; font-size: .65rem; }
+  .ev-tab                 { padding: .45rem .75rem; font-size: .68rem; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 11. MICROINTERAÇÕES
+ * ══════════════════════════════════════════════════════════════════════ */
+
+/* Entrada dos módulos de estudo */
+.disc-group {
+  animation: ev-slide-up .22s var(--ev-ease) both;
+}
+
+@keyframes ev-slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Delay em cascata para os módulos */
+.disc-group:nth-child(1)  { animation-delay: .03s; }
+.disc-group:nth-child(2)  { animation-delay: .06s; }
+.disc-group:nth-child(3)  { animation-delay: .09s; }
+.disc-group:nth-child(4)  { animation-delay: .12s; }
+.disc-group:nth-child(5)  { animation-delay: .15s; }
+.disc-group:nth-child(6)  { animation-delay: .18s; }
+.disc-group:nth-child(7)  { animation-delay: .21s; }
+.disc-group:nth-child(8)  { animation-delay: .24s; }
+.disc-group:nth-child(n+9){ animation-delay: .27s; }
+
+/* Focus visible — acessibilidade */
+.ev-tab:focus-visible,
+.ev-config-btn:focus-visible,
+.tcheck:focus-visible,
+.stcheck:focus-visible {
+  outline:        2px solid var(--ev-gold);
+  outline-offset: 2px;
+}

@@ -1,0 +1,76 @@
+PROTOCOLO 01 — MAPA DE LEGADO OFICIAL
+======================================================
+Gerado: 2026-05-21
+======================================================
+
+LEGADO ATIVO (mantido intencionalmente — NÃO REMOVER AINDA)
+──────────────────────────────────────────────────────────────
+
+1. leitura-legacy-wrap (#tab-leitura)
+   Arquivo: index.html
+   Motivo: HTML antigo da aba Leitura das Leis. Invisível (display:none).
+           Mantido pois funções legadas em estatisticas-banco.js ainda
+           referenciam elementos internos (leitura-list, bq-filtros etc).
+   Remoção segura quando: verificar que nenhuma função acessa seus filhos.
+
+2. edital-legacy-wrap (#tab-edital)
+   Arquivo: index.html
+   Motivo: HTML antigo do Edital Verticalizado. Invisível (display:none).
+           Mantido pois buildEdital() / renderProgessoStats() renderizam
+           dentro de #edital-list e #prog-painel-lista.
+   Remoção segura quando: edital-next.js assumir completamente esses renders.
+
+3. edital-verticalizado.css
+   Arquivo: css/edital-verticalizado.css
+   Motivo: 42 de 64 classes ainda usadas pelo edital-legacy-wrap.
+   Remoção segura quando: edital-legacy-wrap for removido.
+
+4. window.buildLeitura (compat alias)
+   Arquivo: js/app.js (fim do arquivo)
+   Motivo: redireciona chamadas legadas para lnBuild/lnRender.
+   Remoção segura quando: todas as chamadas em _reconstruirUI e boot
+           já forem para lnBuild diretamente (já estão).
+   Status: pode ser removido na próxima limpeza.
+
+5. window.renderLeituraGeral (compat alias)
+   Arquivo: js/app.js (fim do arquivo)
+   Motivo: no-op que chama lnRender se disponível.
+   Remoção segura quando: nenhuma chamada externa a esta função existir.
+   Status: pode ser removido na próxima limpeza.
+
+6. bkImpStep / bkModoChange em app.js
+   Arquivo: js/app.js
+   Motivo: versões antigas do painel de backup. Sobrescritas por profile-panel.js.
+   Remoção segura quando: confirmar que nenhum HTML inline usa essas versões.
+
+7. tab-backup (#tab-backup)
+   Arquivo: index.html
+   Motivo: aba de backup legada com display:none!important. Não está no TABS_LIST.
+           goTab('backup') redireciona para o perfil.
+   Remoção segura quando: confirmar que nenhum fluxo de import/export depende dela.
+
+8. buildLeitura() / renderLeituraGeral() em estatisticas-banco.js
+   Arquivo: js/estatisticas-banco.js
+   Motivo: render original da Leitura de Leis. Não mais chamado diretamente.
+   Remoção segura quando: confirmar que nenhum hook externo os chama.
+
+ALIASES TEMPORÁRIOS ATIVOS
+──────────────────────────
+
+- window.buildLeitura → lnBuild (app.js)
+- window.renderLeituraGeral → lnRender (app.js)
+
+PADRÃO OFICIAL PARA FUTURAS V2
+──────────────────────────────
+
+CSS: #tab-MODULE { tokens only, no display/min-height }
+     #tab-MODULE.active { min-height: calc(100vh - 44px); }
+
+JS:  build() + render() + teardown() + rebuild()
+     goTab hook com try/catch
+     concTrocar hook com try/catch
+
+Storage: sempre salvar { primaryData, auxiliaryData } juntos
+         nunca sobrescrever um campo sem incluir os outros
+
+Ver: P01Storage, P01Lifecycle, P01Guard em storage.js
