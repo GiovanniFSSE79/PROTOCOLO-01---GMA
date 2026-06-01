@@ -32,53 +32,70 @@ let _fbReady  = false;  // true quando o SDK carregou e autenticou
 let _fbSyncTimer = null;
 
 /* ── Carrega o SDK do Firebase via CDN e inicializa ── */
+/* Aguarda o DOM estar pronto para não travar o carregamento da página */
 (function _initFirebase() {
-  // Evita dupla inicialização
   if (window._fbInitDone) return;
   window._fbInitDone = true;
 
   function _loadScript(src, cb) {
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = cb;
-    s.onerror = function() {
-      console.warn('[P01-FB] Falha ao carregar SDK:', src);
-    };
-    document.head.appendChild(s);
+    try {
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = cb;
+      s.onerror = function() {
+        console.warn('[P01-FB] Falha ao carregar SDK:', src);
+        // Não trava — sistema continua com localStorage
+      };
+      (document.head || document.body || document.documentElement).appendChild(s);
+    } catch(e) {
+      console.warn('[P01-FB] _loadScript error:', e.message);
+    }
   }
 
-  // Carrega Firebase App + Firestore + Auth (compat SDK — funciona sem bundler)
-  _loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js', function() {
-    _loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js', function() {
-      _loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js', function() {
-        try {
-          // Inicializa o app (evita erro se já foi iniciado)
-          if (!firebase.apps.length) {
-            firebase.initializeApp(_fbConfig);
+  function _startFirebase() {
+    _loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js', function() {
+      _loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js', function() {
+        _loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js', function() {
+          try {
+            if (typeof firebase === 'undefined') {
+              console.warn('[P01-FB] firebase global não encontrado após carregamento do SDK');
+              return;
+            }
+            if (!firebase.apps.length) {
+              firebase.initializeApp(_fbConfig);
+            }
+            _fbDb = firebase.firestore();
+
+            firebase.auth().signInAnonymously()
+              .then(function(cred) {
+                _fbUserId = cred.user.uid;
+                localStorage.setItem('p01_fb_uid', _fbUserId);
+                _fbReady = true;
+                console.log('[P01-FB] ✓ Firebase pronto. UID:', _fbUserId);
+                _fbPullFromCloud();
+              })
+              .catch(function(e) {
+                console.warn('[P01-FB] Auth anônimo falhou:', e.message);
+                // Sistema continua funcionando só com localStorage
+              });
+          } catch(e) {
+            console.warn('[P01-FB] Erro ao inicializar Firebase:', e.message);
           }
-          _fbDb = firebase.firestore();
-
-          // Login anônimo — identifica o dispositivo sem senha
-          firebase.auth().signInAnonymously()
-            .then(function(cred) {
-              _fbUserId = cred.user.uid;
-              localStorage.setItem('p01_fb_uid', _fbUserId);
-              _fbReady = true;
-              console.log('[P01-FB] ✓ Firebase pronto. UID:', _fbUserId);
-
-              // Ao conectar, tenta sincronizar dados da nuvem → local
-              _fbPullFromCloud();
-            })
-            .catch(function(e) {
-              console.warn('[P01-FB] Auth anônimo falhou:', e.message);
-              // Funciona offline normalmente (só localStorage)
-            });
-        } catch(e) {
-          console.warn('[P01-FB] Erro ao inicializar Firebase:', e.message);
-        }
+        });
       });
     });
-  });
+  }
+
+  // Aguarda o DOM estar totalmente pronto antes de injetar scripts externos
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(_startFirebase, 500); // 500ms de folga após o DOM
+    });
+  } else {
+    // DOM já está pronto (script carregou depois do DOMContentLoaded)
+    setTimeout(_startFirebase, 500);
+  }
 })();
 
 /* ════════════════════════════════════════════════════════════════════
